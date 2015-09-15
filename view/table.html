@@ -1,0 +1,60 @@
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th>$</th>
+      <th ng-repeat='user in users'>
+        <div class="input-group">
+          <input type="text" ng-model="user.name" class="form-control" id="{{'userNameInput' + $id}}" placeholder="Name"/>
+          <span class="input-group-btn">
+            <button ng-click="removeUser(user)" type="button" class="btn btn-default">
+              <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+            </button>
+          </span>
+        </div>
+      </th>
+      <th>
+        <button ng-click="addUser()" type="button" class="btn btn-default">
+          <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        </button>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="spending in spendings" ng-class="(isCheckedSpending(spending)) ? '' : 'danger'">
+      <td>
+        <div class="input-group">
+          <input type="number" ng-model="spending.spent" class="form-control" id="{{'spentInput' + $id}}" placeholder="Spent"/>
+          <span class="input-group-btn">
+            <button ng-click="removeSpending(spending)" type="button" class="btn btn-default">
+              <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+            </button>
+          </span>
+        </div>
+      </td>
+      <td ng-repeat='user in users'>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" ng-model="spending.users[$index].checked"> {{getSplittedSpent(spending)[$index]}}</input>
+          </label>
+        </div>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>
+        <button ng-click="addSpending()" type="button" class="btn btn-default">
+          <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        </button>
+      </td>
+      <td ng-repeat='user in users'></td>
+      <td></td>
+    </tr>
+    <tr ng-class="(allSpendingChecked()) ? '' : 'danger'">
+      <td>{{getSpentTotal()}}</td>
+      <td ng-repeat='user in users'>
+        {{getSplittedSpendingTotal()[$index]}}
+      </td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
