@@ -1,60 +1,87 @@
-<table class="table table-hover">
-  <thead>
-    <tr>
-      <th>$</th>
-      <th ng-repeat='user in users'>
-        <div class="input-group">
-          <input type="text" ng-model="user.name" class="form-control" id="{{'userNameInput' + $id}}" placeholder="Name"/>
-          <span class="input-group-btn">
-            <button ng-click="removeUser(user)" type="button" class="btn btn-default">
-              <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+<div>
+  <h2>Settings</h2>
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" ng-model="checkedByDefault">New items checked for all</input>
+    </label>
+  </div>
+  <div class="input-group">
+    <label for="decimalNumbersInput">Decimals number</label>
+    <input type="number" min="0" ng-model="decimalsNumber" class="form-control" id="decimalNumbersInput" placeholder="2"/>
+  </div>
+</div>
+<div>
+  <h2>Splitter</h2>
+  <div class="table-responsive">
+    <table class="table table-hover table-bordered">
+      <thead>
+        <tr>
+          <th class="spendings-column">$</th>
+          <th class="user-column" ng-repeat='user in users'>
+            <div class="input-group">
+              <input type="text" ng-model="user.name" class="form-control" id="{{'userNameInput' + $id}}" placeholder="Name"/>
+              <span class="input-group-btn">
+                <button ng-click="removeUser(user)" type="button" class="btn btn-default">
+                  <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                </button>
+              </span>
+            </div>
+          </th>
+          <th class="settings-column">
+            <button ng-click="addUser()" type="button" class="btn btn-default">
+              <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
             </button>
-          </span>
-        </div>
-      </th>
-      <th>
-        <button ng-click="addUser()" type="button" class="btn btn-default">
-          <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-        </button>
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr ng-repeat="spending in spendings" ng-class="(isCheckedSpending(spending)) ? '' : 'danger'">
-      <td>
-        <div class="input-group">
-          <input type="number" ng-model="spending.spent" class="form-control" id="{{'spentInput' + $id}}" placeholder="Spent"/>
-          <span class="input-group-btn">
-            <button ng-click="removeSpending(spending)" type="button" class="btn btn-default">
-              <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="spending in spendings" ng-class="(isCheckedSpending(spending)) ? '' : 'danger'">
+          <td>
+            <div class="input-group">
+              <input type="number" ng-model="spending.spent" class="form-control" id="{{'spentInput' + $id}}" placeholder="Spent"/>
+              <span class="input-group-btn">
+                <button ng-click="removeSpending(spending)" type="button" class="btn btn-default">
+                  <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                </button>
+              </span>
+            </div>
+          </td>
+          <td ng-repeat='user in users'>
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" ng-model="spending.users[$index].checked"> {{getSplittedSpent(spending)[$index]}}</input>
+              </label>
+            </div>
+          </td>
+          <td>
+            <button ng-click="checkForAll(spending)" type="button" class="btn btn-default">
+              <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
             </button>
-          </span>
-        </div>
-      </td>
-      <td ng-repeat='user in users'>
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" ng-model="spending.users[$index].checked"> {{getSplittedSpent(spending)[$index]}}</input>
-          </label>
-        </div>
-      </td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>
-        <button ng-click="addSpending()" type="button" class="btn btn-default">
-          <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-        </button>
-      </td>
-      <td ng-repeat='user in users'></td>
-      <td></td>
-    </tr>
-    <tr ng-class="(allSpendingChecked()) ? '' : 'danger'">
-      <td>{{getSpentTotal()}}</td>
-      <td ng-repeat='user in users'>
-        {{getSplittedSpendingTotal()[$index]}}
-      </td>
-      <td></td>
-    </tr>
-  </tbody>
-</table>
+            <button ng-click="uncheckForAll(spending)" type="button" class="btn btn-default">
+              <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span>
+            </button>
+            <button ng-click="swapChecks(spending)" type="button" class="btn btn-default">
+              <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button ng-click="addSpending()" type="button" class="btn btn-default">
+              <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            </button>
+          </td>
+          <td ng-repeat='user in users'></td>
+          <td></td>
+        </tr>
+        <tr ng-class="(allSpendingChecked()) ? '' : 'danger'">
+          <td><strong>{{getSpentTotal()}}</strong></td>
+          <td ng-repeat='user in users'>
+            <strong>{{getSplittedSpendingTotal()[$index]}}</strong>
+          </td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,12 +1,16 @@
 MoneySplitter.controller('MoneySplitterController',
   function($scope, $location, $routeParams) {
 
+    //settings
+    $scope.checkedByDefault = true;
+    $scope.decimalsNumber = 2;
+
     $scope.users = [
       {
-        name: "user1"
+        name: "Vasya"
       }, 
       {
-        name: "user2"
+        name: "Sasha"
       }];
 
     $scope.spendings = [
@@ -18,13 +22,20 @@ MoneySplitter.controller('MoneySplitterController',
         ]
       },
       {
-        spent: 15,
+        spent: 150,
         users: [
           {user: $scope.users[0], checked: false}, 
           {user: $scope.users[1], checked: true}, 
         ]
       }
     ]
+
+    function round(toRound) {
+      var result;
+      var multiplier = Math.pow(10, $scope.decimalsNumber);
+      result = Math.round(toRound * multiplier) / multiplier;
+      return result;
+    }
 
     $scope.addUser = function() {
       var newUser = {
@@ -52,7 +63,7 @@ MoneySplitter.controller('MoneySplitterController',
       var usersArray = [];
       for(var i = 0; i < $scope.users.length; i++){
           var userToInsert = $scope.users[i];
-          usersArray.push({user: userToInsert, checked: false});
+          usersArray.push({user: userToInsert, checked: $scope.checkedByDefault});
       }
       var newSpending = {
         spent: 100,
@@ -72,7 +83,7 @@ MoneySplitter.controller('MoneySplitterController',
           var spending = $scope.spendings[i];
           total += spending.spent;
       }
-      return total;
+      return round(total);
     }
 
     $scope.isCheckedSpending = function(spending) {
@@ -106,7 +117,7 @@ MoneySplitter.controller('MoneySplitterController',
 
       for(var i = 0; i < spending.users.length; i++){
           if (spending.users[i].checked) {
-            result.push(spending.spent / checked);
+            result.push(round(spending.spent / checked));
           } else {
             result.push(0);
           }
@@ -114,7 +125,7 @@ MoneySplitter.controller('MoneySplitterController',
       return result;
     }
 
-    $scope.getSplittedSpendingTotal = function(){
+    $scope.getSplittedSpendingTotal = function() {
       var result = [];
       for(var i = 0; i < $scope.users.length; i++){
           result.push(0);
@@ -126,7 +137,30 @@ MoneySplitter.controller('MoneySplitterController',
             result[j] += splittedSpent[j]
           }
       }
+
+      for(var i = 0; i < $scope.users.length; i++){
+          result[i] = round(result[i]);
+      }
+
       return result;
+    }
+
+    $scope.checkForAll = function(spending) {
+      for (var i = 0; i < spending.users.length; i++) {
+        spending.users[i].checked = true;
+      }
+    }
+
+    $scope.uncheckForAll = function(spending) {
+      for (var i = 0; i < spending.users.length; i++) {
+        spending.users[i].checked = false;
+      }
+    }
+
+    $scope.swapChecks = function(spending) {
+      for (var i = 0; i < spending.users.length; i++) {
+        spending.users[i].checked = !spending.users[i].checked;
+      }
     }
   }
 );

@@ -1,0 +1,7 @@
+@-moz-document url-prefix() {
+  fieldset { display: table-cell; }
+}
+
+.settings-column, .spendings-column, .user-column {
+	min-width: 150px;
+}
