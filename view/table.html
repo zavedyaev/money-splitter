@@ -9,6 +9,23 @@
     <label for="decimalNumbersInput">Decimals number</label>
     <input type="number" min="0" ng-model="decimalsNumber" class="form-control" id="decimalNumbersInput" placeholder="2"/>
   </div>
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" ng-model="showNotes">Show notes</input>
+    </label>
+  </div>
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" ng-model="calculateTransactions">Calculate transactions</input>
+    </label>
+  </div>
+  <div class="input-group" ng-show="calculateTransactions">
+    <label for="defaultPayers">Default payers</label>
+    <select name="defaultPayers" class="form-control" multiple id="defaultPayers"
+            ng-options="user as user.name for user in users"
+            ng-model="defaultPayers">
+    </select>
+  </div>
 </div>
 <div>
   <h2>Splitter</h2>
@@ -16,7 +33,9 @@
     <table class="table table-hover table-bordered">
       <thead>
         <tr>
+          <th class="note-column" ng-show="showNotes">note</th>
           <th class="spendings-column">$</th>
+          <th class="payed-by-column" ng-show="calculateTransactions">payed by</th>
           <th class="user-column" ng-repeat='user in users'>
             <div class="input-group">
               <input type="text" ng-model="user.name" class="form-control" id="{{'userNameInput' + $id}}" placeholder="Name"/>
@@ -36,9 +55,16 @@
       </thead>
       <tbody>
         <tr ng-repeat="spending in spendings" ng-class="(isCheckedSpending(spending)) ? '' : 'danger'">
+          <td ng-show="showNotes">
+            <div class="form-group">
+              <input type="text" ng-model="spending.note" class="form-control" id="{{'note' + $id}}"
+                     placeholder="Note"/>
+            </div>
+          </td>
           <td>
             <div class="input-group">
-              <input type="number" ng-model="spending.spent" class="form-control" id="{{'spentInput' + $id}}" placeholder="Spent"/>
+              <input type="number" ng-model="spending.spent" ng-change="recalcDebtsByFamilies()" class="form-control"
+                     id="{{'spentInput' + $id}}" placeholder="Spent"/>
               <span class="input-group-btn">
                 <button ng-click="removeSpending(spending)" type="button" class="btn btn-default">
                   <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
@@ -46,10 +72,19 @@
               </span>
             </div>
           </td>
+          <td ng-class="(spending.payedBy.length > 0) ? '' : 'danger'" ng-show="calculateTransactions">
+            <div class="form-group" ng-class="(spending.payedBy.length > 0) ? '' : 'has-error'">
+              <select class="form-control" multiple id="{{'payedBy' + $id}}"
+                      ng-options="user as user.name for user in users" ng-change="recalcDebtsByFamilies()"
+                      ng-model="spending.payedBy">
+              </select>
+            </div>
+          </td>
           <td ng-repeat='user in users'>
             <div class="checkbox">
               <label>
-                <input type="checkbox" ng-model="spending.users[$index].checked"> {{getSplittedSpent(spending)[$index]}}</input>
+                <input type="checkbox" ng-model="spending.users[$index].checked" ng-change="recalcDebtsByFamilies()">
+                {{round(getSplittedSpent(spending)[$index])}}</input>
               </label>
             </div>
           </td>
@@ -66,18 +101,22 @@
           </td>
         </tr>
         <tr>
+          <td ng-show="showNotes"></td>
           <td>
             <button ng-click="addSpending()" type="button" class="btn btn-default">
               <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
             </button>
           </td>
+          <td ng-show="calculateTransactions"></td>
           <td ng-repeat='user in users'></td>
           <td></td>
         </tr>
         <tr ng-class="(allSpendingChecked()) ? '' : 'danger'">
-          <td><strong>{{getSpentTotal()}}</strong></td>
+          <td ng-show="showNotes"></td>
+          <td><strong>{{round(getSpentTotal())}}</strong></td>
+          <td ng-show="calculateTransactions"></td>
           <td ng-repeat='user in users'>
-            <strong>{{getSplittedSpendingTotal()[$index]}}</strong>
+            <strong>{{round(getSplittedSpendingTotal()[$index])}}</strong>
           </td>
           <td></td>
         </tr>
@@ -85,3 +124,109 @@
     </table>
   </div>
 </div>
+<div ng-show="calculateTransactions">
+  <h2>Payed by user</h2>
+  <div class="table-responsive">
+    <table class="table table-hover table-bordered">
+      <thead>
+      <tr>
+        <th class="payer-column">User</th>
+        <th class="paid-column">Paid</th>
+        <th class="spent-column">Spent</th>
+        <th class="difference-column">Difference</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="user in users">
+        <td>{{user.name}}</td>
+        <td>{{round(getPayedByUsers()[$index])}}</td>
+        <td>{{round(getSplittedSpendingTotal()[$index])}}</td>
+        <td>{{round(getPayedByUsers()[$index] - getSplittedSpendingTotal()[$index])}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div ng-show="calculateTransactions">
+  <h2>Families</h2>
+  <div class="table-responsive">
+    <table class="table table-hover table-bordered">
+      <thead>
+      <tr>
+        <th ng-repeat="family in families">
+          Family {{$index}}
+          <button ng-click="removeFamily($index)" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+          </button>
+        </th>
+        <th>
+          <button ng-click="addFamily()" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+          </button>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-class="(allPeopleInFamilies()) ? '' : 'danger'">
+        <td ng-repeat="familyId in range(0,families.length-1)">
+          <div class="form-group">
+            <select class="form-control" multiple id="{{'family' + $id}}"
+                    ng-options="user as user.name for user in users"
+                    ng-model="families[familyId]">
+            </select>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div ng-show="calculateTransactions">
+  <h2>Payed by family</h2>
+  <div class="table-responsive">
+    <table class="table table-hover table-bordered">
+      <thead>
+      <tr>
+        <th class="payer-family-column">Family</th>
+        <th class="paid-family-column">Paid</th>
+        <th class="spent-family-column">Spent</th>
+        <th class="difference-family-column">Difference</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="family in families">
+        <td><span ng-repeat="user in family">{{user.name}} </span></td>
+        <td>{{round(getPayedByFamilies()[$index])}}</td>
+        <td>{{round(getSpentByFamilies()[$index])}}</td>
+        <td>{{round(getPayedByFamilies()[$index] - getSpentByFamilies()[$index])}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div ng-show="calculateTransactions">
+  <h2>Debts by family</h2>
+  <div class="table-responsive">
+    <table class="table table-hover table-bordered">
+      <thead>
+      <tr>
+        <th class="debtor-family-column">Debtor Family</th>
+        <th class="creditor-family-column">Creditor Family</th>
+        <th class="debt-family-column">Debt</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="debtByFamily in debtsByFamilies">
+        <td><span ng-repeat="user in debtByFamily.debtor">{{user.name}} </span></td>
+        <td><span ng-repeat="user in debtByFamily.creditor">{{user.name}} </span></td>
+        <td>{{round(debtByFamily.debt)}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
