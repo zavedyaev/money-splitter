@@ -9,6 +9,7 @@ MoneySplitter.controller('MoneySplitterController',
             $scope.calculateTransactions = true;
             $scope.debtsByFamilies = [];
             $scope.serializedData = "";
+            $scope.urlStr = "";
 
             $scope.users = [
                 {
@@ -385,7 +386,10 @@ MoneySplitter.controller('MoneySplitterController',
 
         $scope.updateUrl = function () {
             $scope.serializedData = $scope.getSerializedData();
-            $location.search("data", $scope.serializedData);
+            var paramsRegex = /#\/\?.*$/;
+            var endRegex = /#\/$/;
+            var urlWithoutParams = window.location.href.replace(paramsRegex, "").replace(endRegex, "");
+            $scope.urlStr = urlWithoutParams + "#/?data=" + encodeURIComponent($scope.serializedData);
         };
 
         $scope.recalcDebtsByFamilies = function () {
