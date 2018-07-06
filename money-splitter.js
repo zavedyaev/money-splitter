@@ -1,6 +1,10 @@
 var moneySplitterConfig = function ($routeProvider) {
 
     $routeProvider
+        .when('/', {
+            controller: 'MoneySplitterController',
+            templateUrl: 'view/table.html'
+        })
         .when('/:data', {
             controller: 'MoneySplitterController',
             templateUrl: 'view/table.html'
