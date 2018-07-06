@@ -1,47 +1,53 @@
 MoneySplitter.controller('MoneySplitterController',
     function ($scope, $location, $routeParams) {
 
-        //settings
-        $scope.checkedByDefault = true;
-        $scope.decimalsNumber = 2;
-        $scope.showNotes = true;
-        $scope.calculateTransactions = true;
+        $scope.reset = function () {
+            //default settings
+            $scope.checkedByDefault = true;
+            $scope.decimalsNumber = 2;
+            $scope.showNotes = true;
+            $scope.calculateTransactions = true;
+            $scope.debtsByFamilies = [];
+            $scope.serializedData = "";
 
-        $scope.users = [
-            {
-                name: "Vasya"
-            },
-            {
-                name: "Sasha"
-            }];
+            $scope.users = [
+                {
+                    name: "Vasya"
+                },
+                {
+                    name: "Sasha"
+                }];
 
-        $scope.families = [
-            [$scope.users[0]],
-            [$scope.users[1]]
-        ];
+            $scope.families = [
+                [$scope.users[0]],
+                [$scope.users[1]]
+            ];
 
-        $scope.defaultPayers = [$scope.users[1]];
+            $scope.defaultPayers = [$scope.users[1]];
 
-        $scope.spendings = [
-            {
-                spent: 100,
-                payedBy: [$scope.users[0], $scope.users[1]],
-                note: 'Pen',
-                users: [
-                    {user: $scope.users[0], checked: true},
-                    {user: $scope.users[1], checked: true}
-                ]
-            },
-            {
-                spent: 150,
-                payedBy: [$scope.users[0]],
-                note: 'Apple',
-                users: [
-                    {user: $scope.users[0], checked: false},
-                    {user: $scope.users[1], checked: true}
-                ]
-            }
-        ];
+            $scope.spendings = [
+                {
+                    spent: 100,
+                    payedBy: [$scope.users[0], $scope.users[1]],
+                    note: 'Pen',
+                    users: [
+                        {user: $scope.users[0], checked: true},
+                        {user: $scope.users[1], checked: true}
+                    ]
+                },
+                {
+                    spent: 150,
+                    payedBy: [$scope.users[0]],
+                    note: 'Apple',
+                    users: [
+                        {user: $scope.users[0], checked: false},
+                        {user: $scope.users[1], checked: true}
+                    ]
+                }
+            ];
+        };
+
+        $scope.reset();
 
         function round(toRound) {
             // var result;
@@ -168,18 +174,21 @@ MoneySplitter.controller('MoneySplitterController',
             for (var i = 0; i < spending.users.length; i++) {
                 spending.users[i].checked = true;
             }
+            $scope.recalcDebtsByFamilies();
         };
 
         $scope.uncheckForAll = function (spending) {
             for (var i = 0; i < spending.users.length; i++) {
                 spending.users[i].checked = false;
             }
+            $scope.recalcDebtsByFamilies();
         };
 
         $scope.swapChecks = function (spending) {
             for (var i = 0; i < spending.users.length; i++) {
                 spending.users[i].checked = !spending.users[i].checked;
             }
+            $scope.recalcDebtsByFamilies();
         };
 
 
@@ -290,8 +299,6 @@ MoneySplitter.controller('MoneySplitterController',
             return result;
         };
 
-        $scope.debtsByFamilies = [];
-
         $scope.getDebtsByFamilies = function () {
             var result = [];
 
@@ -353,8 +360,37 @@ MoneySplitter.controller('MoneySplitterController',
             return result
         };
 
+        // ucs-2 string to base64 encoded ascii
+        function utoa(str) {
+            return window.btoa(unescape(encodeURIComponent(str)));
+        }
+        // base64 encoded ascii to ucs-2 string
+        function atou(str) {
+            return decodeURIComponent(escape(window.atob(str)));
+        }
+
+        $scope.getSerializedData = function () {
+            var dataObject = {
+                checkedByDefault: $scope.checkedByDefault,
+                decimalsNumber: $scope.decimalsNumber,
+                showNotes: $scope.showNotes,
+                calculateTransactions: $scope.calculateTransactions,
+                users: $scope.users,
+                families: $scope.families,
+                defaultPayers: $scope.defaultPayers,
+                spendings: $scope.spendings
+            };
+            return utoa(JSON.stringify(dataObject))
+        };
+
+        $scope.updateUrl = function () {
+            $scope.serializedData = $scope.getSerializedData();
+            $location.search("data", $scope.serializedData);
+        };
+
         $scope.recalcDebtsByFamilies = function () {
             $scope.debtsByFamilies = $scope.getDebtsByFamilies();
+            $scope.updateUrl()
         };
 
         $scope.$watchCollection('spendings', function () {
@@ -364,6 +400,70 @@ MoneySplitter.controller('MoneySplitterController',
         $scope.$watchCollection('families', function () {
             $scope.recalcDebtsByFamilies()
         });
+
+
+        function findUserByName(name) {
+            return $scope.users.find(function (user) { return user.name === name; })
+        }
+
+        $scope.loadSerializedData = function () {
+            var dataObject = JSON.parse(atou($scope.serializedData));
+
+            $scope.checkedByDefault = dataObject.checkedByDefault;
+            $scope.decimalsNumber = dataObject.decimalsNumber;
+            $scope.showNotes = dataObject.showNotes;
+            $scope.calculateTransactions = dataObject.calculateTransactions;
+            $scope.users = dataObject.users;
+            $scope.families = dataObject.families;
+
+            for (var i = 0; i < $scope.families.length; i++) {
+                var family = $scope.families[i];
+                var refreshedFamily = [];
+                for (var j = 0; j < family.length; j++) {
+                    var user = family[j];
+                    var existingUser = findUserByName(user.name);
+                    refreshedFamily.push(existingUser)
+                }
+
+                $scope.families[i] = refreshedFamily
+            }
+
+            $scope.defaultPayers = dataObject.defaultPayers;
+
+            for (i = 0; i < $scope.defaultPayers.length; i++) {
+                user = $scope.defaultPayers[i];
+                existingUser = findUserByName(user.name);
+                $scope.defaultPayers[i] = user
+            }
+
+            $scope.spendings = dataObject.spendings;
+
+            for (i = 0; i < $scope.spendings.length; i++) {
+                var spending = $scope.spendings[i];
+
+                var refreshedPayedBy = [];
+                for (j = 0; j < spending.payedBy.length; j ++) {
+                    user = spending.payedBy[j];
+                    existingUser = findUserByName(user.name);
+                    refreshedPayedBy.push(user)
+                }
+                spending.payedBy = refreshedPayedBy;
+
+                for (j = 0; j < spending.users.length; j ++) {
+                    user = spending.users[j];
+                    existingUser = findUserByName(user.user.name);
+                    user.user = existingUser
+                }
+            }
+
+            $scope.recalcDebtsByFamilies()
+        };
+
+        var urlParam = $routeParams.data;
+        if (urlParam !== undefined && urlParam !== "") {
+            $scope.serializedData = urlParam;
+            $scope.loadSerializedData();
+        }
     }
 );
 

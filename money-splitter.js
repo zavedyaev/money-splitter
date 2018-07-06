@@ -1,10 +1,10 @@
-var moneySplitterConfig = function($routeProvider) {
+var moneySplitterConfig = function ($routeProvider) {
 
-  $routeProvider
-    .when('/', {
-      controller: 'MoneySplitterController',
-      templateUrl: 'view/table.html'
-    });
+    $routeProvider
+        .when('/:data', {
+            controller: 'MoneySplitterController',
+            templateUrl: 'view/table.html'
+        });
 };
 
 var MoneySplitter = angular.module('MoneySplitter', ['ngRoute']).config(moneySplitterConfig);
