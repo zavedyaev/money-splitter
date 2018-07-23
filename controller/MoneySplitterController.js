@@ -381,7 +381,8 @@ MoneySplitter.controller('MoneySplitterController',
                 defaultPayers: $scope.defaultPayers,
                 spendings: $scope.spendings
             };
-            return utoa(JSON.stringify(dataObject))
+            var hashKeyReplaceRegex = /,"\$\$hashKey":"object:[0-9]+"/;
+            return utoa(JSON.stringify(dataObject).split(hashKeyReplaceRegex).join("")) //replace all
         };
 
         $scope.updateUrl = function () {
@@ -437,7 +438,7 @@ MoneySplitter.controller('MoneySplitterController',
             for (i = 0; i < $scope.defaultPayers.length; i++) {
                 user = $scope.defaultPayers[i];
                 existingUser = findUserByName(user.name);
-                $scope.defaultPayers[i] = user
+                $scope.defaultPayers[i] = existingUser
             }
 
             $scope.spendings = dataObject.spendings;
@@ -449,7 +450,7 @@ MoneySplitter.controller('MoneySplitterController',
                 for (j = 0; j < spending.payedBy.length; j ++) {
                     user = spending.payedBy[j];
                     existingUser = findUserByName(user.name);
-                    refreshedPayedBy.push(user)
+                    refreshedPayedBy.push(existingUser)
                 }
                 spending.payedBy = refreshedPayedBy;
 

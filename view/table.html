@@ -1,10 +1,9 @@
 <div>
+  <div class="input-group">
+    <a id="urlStr" ng-href="{{urlStr}}">Share this calculation with your friends</a>
+  </div>
   <h2>Settings</h2>
   <button ng-click="reset()" type="button" class="btn btn-default">Reset all to default</button>
-  <div class="input-group">
-    <label for="urlStr">Share Url</label>
-    <input type="text" ng-model="urlStr" class="form-control" id="urlStr" placeholder="url"/>
-  </div>
   <div class="checkbox">
     <label>
       <input type="checkbox" ng-model="checkedByDefault">New items checked for all</input>
@@ -35,12 +34,20 @@
 <div>
   <h2>Splitter</h2>
   <div class="table-responsive">
-    <table class="table table-hover table-bordered">
+    <table class="table table-hover table-bordered" id="splitter-table">
       <thead>
-        <tr>
-          <th class="note-column" ng-show="showNotes">note</th>
-          <th class="spendings-column">$</th>
-          <th class="payed-by-column" ng-show="calculateTransactions">payed by</th>
+        <tr class="main-background">
+          <th class="note-column" ng-show="showNotes" rowspan="2">Note</th>
+          <th class="spendings-column" rowspan="2">$</th>
+          <th class="payed-by-column" ng-show="calculateTransactions" rowspan="2">Payed by</th>
+          <th colspan="{{users.length}}">Spent by</th>
+          <th class="settings-column" rowspan="2">
+            <button ng-click="addUser()" type="button" class="btn btn-default">
+              <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            </button>
+          </th>
+        </tr>
+        <tr class="main-background">
           <th class="user-column" ng-repeat='user in users'>
             <div class="input-group">
               <input type="text" ng-model="user.name" class="form-control" id="{{'userNameInput' + $id}}" placeholder="Name"/>
@@ -50,11 +57,6 @@
                 </button>
               </span>
             </div>
-          </th>
-          <th class="settings-column">
-            <button ng-click="addUser()" type="button" class="btn btn-default">
-              <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-            </button>
           </th>
         </tr>
       </thead>
@@ -203,7 +205,7 @@
       </thead>
       <tbody>
       <tr ng-repeat="family in families">
-        <td><span ng-repeat="user in family">{{user.name}} </span></td>
+        <td><span ng-repeat="user in family">{{user.name}}{{$last ? '' : ', '}}</span></td>
         <td>{{round(getPayedByFamilies()[$index])}}</td>
         <td>{{round(getSpentByFamilies()[$index])}}</td>
         <td>{{round(getPayedByFamilies()[$index] - getSpentByFamilies()[$index])}}</td>
@@ -226,8 +228,8 @@
       </thead>
       <tbody>
       <tr ng-repeat="debtByFamily in debtsByFamilies">
-        <td><span ng-repeat="user in debtByFamily.debtor">{{user.name}} </span></td>
-        <td><span ng-repeat="user in debtByFamily.creditor">{{user.name}} </span></td>
+        <td><span ng-repeat="user in debtByFamily.debtor">{{user.name}}{{$last ? '' : ', '}}</span></td>
+        <td><span ng-repeat="user in debtByFamily.creditor">{{user.name}}{{$last ? '' : ', '}}</span></td>
         <td>{{round(debtByFamily.debt)}}</td>
       </tr>
       </tbody>

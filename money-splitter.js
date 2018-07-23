@@ -12,3 +12,12 @@ var moneySplitterConfig = function ($routeProvider) {
 };
 
 var MoneySplitter = angular.module('MoneySplitter', ['ngRoute']).config(moneySplitterConfig);
+
+function initFloatThead() {
+    var $table = $('#splitter-table');
+    $table.floatThead({
+        responsiveContainer: function($table){
+            return $table.closest('.table-responsive');
+        }
+    });
+}

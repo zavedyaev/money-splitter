@@ -5,3 +5,11 @@
 .settings-column, .spendings-column, .user-column {
 	min-width: 150px;
 }
+
+.payed-by-column, .note-column {
+    min-width: 150px;
+}
+
+.main-background {
+    background-color: #ffffff;
+}
