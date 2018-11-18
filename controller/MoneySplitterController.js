@@ -393,6 +393,29 @@ MoneySplitter.controller('MoneySplitterController',
             $scope.urlStr = urlWithoutParams + "#/?data=" + encodeURIComponent($scope.serializedData);
         };
 
+        $scope.fallbackCopyTextToClipboard = function (text) {
+            var textArea = document.createElement("fallbackCopyTextToClipboardTextarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+        };
+
+        $scope.copyTextToClipboard = function (text) {
+            if (!navigator.clipboard) {
+                $scope.fallbackCopyTextToClipboard(text);
+                return;
+            }
+            navigator.clipboard.writeText(text);
+        };
+
+        $scope.copyUrl = function () {
+            $scope.copyTextToClipboard($scope.urlStr);
+        };
+
         $scope.recalcDebtsByFamilies = function () {
             $scope.debtsByFamilies = $scope.getDebtsByFamilies();
             $scope.updateUrl()
