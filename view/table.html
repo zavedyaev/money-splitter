@@ -1,11 +1,22 @@
 <div>
-  <button class="btn btn-primary" type="button" ng-click="copyUrl()">
-    Share (copy link to clipboard) <span class="glyphicon glyphicon-share" aria-hidden="true"></span>
-  </button>
-  <button class="btn btn-default" type="button" data-toggle="collapse"
-          data-target="#collapseSettings" aria-expanded="false" aria-controls="collapseSettings">
-    Settings <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-  </button>
+  <form class="form-inline">
+    <!-- with hack for floating table head -->
+    <button class="btn btn-default" type="button" data-toggle="collapse"
+            onclick="setTimeout(function() {$('#splitter-table').floatThead('reflow');},350)"
+            data-target="#collapseSettings" aria-expanded="false" aria-controls="collapseSettings">
+      Settings <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+    </button>
+
+    <button class="btn btn-primary" type="button" ng-click="copyUrl()">
+      Share (copy link to clipboard) <span class="glyphicon glyphicon-share" aria-hidden="true"></span>
+    </button>
+
+    <div class="form-group">
+      <label for="url-str-input">Url</label>
+      <input type="url" id="url-str-input" class="form-control" ng-model="urlStr" readonly="readonly"/>
+    </div>
+  </form>
+
   <div class="collapse" id="collapseSettings">
     <div class="well">
       <div class="checkbox">

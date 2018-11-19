@@ -394,14 +394,11 @@ MoneySplitter.controller('MoneySplitterController',
         };
 
         $scope.fallbackCopyTextToClipboard = function (text) {
-            var textArea = document.createElement("fallbackCopyTextToClipboardTextarea");
-            textArea.value = text;
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
+            let textInput = document.getElementById("url-str-input");
+            textInput.focus();
+            textInput.select();
 
             document.execCommand('copy');
-            document.body.removeChild(textArea);
         };
 
         $scope.copyTextToClipboard = function (text) {
