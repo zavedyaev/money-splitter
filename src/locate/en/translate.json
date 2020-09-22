@@ -1,0 +1,21 @@
+{
+  "translations": {
+    "description": {
+      "title": "Money-Splitter",
+      "value": "This app will help you to split a receipt between friends fast and fairly."
+    },
+    "people": {
+      "header": "People",
+      "add": "Add a new one...",
+      "namePlaceholder": "Name"
+    },
+    "families": {
+      "enable": "Enable people grouping by families. We can reduce transactions count, in case only one man from a family will pay/receive money",
+      "header": "Families",
+      "singlePeople": "Not grouped in a family",
+      "members": "Members of selected family",
+      "add": "Add a new family...",
+      "namePlaceholder": "Family Name"
+    }
+  }
+}
