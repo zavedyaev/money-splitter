@@ -5,6 +5,7 @@ import {Family, Man, Spending} from "./Models";
 import PeopleComponent from "./PeopleComponent";
 import {v4 as uuidv4} from 'uuid';
 import FamiliesComponent from "./FamiliesComponent";
+import SpendingsComponent from "./SpendingsComponent";
 
 export class App extends React.Component<Props, State> {
 
@@ -97,7 +98,69 @@ export class App extends React.Component<Props, State> {
                     }
                 ]
             }],
-            spendings: [],
+            spendings: [{
+                id: "1",
+                name: "Tea",
+                spent: 10.5,
+                payedBy: [{
+                    id: "1",
+                    name: "West"
+                }],
+                users: [
+                    {
+                        id: "5",
+                        name: "Pasha"
+                    }, {
+                        id: "6",
+                        name: "Arina"
+                    }
+                ]
+            }, {
+                id: "2",
+                name: "Pineapple",
+                spent: 89.99,
+                payedBy: [{
+                    id: "1",
+                    name: "West"
+                }, {
+                    id: "5",
+                    name: "Pasha"
+                }],
+                users: [
+                    {
+                        id: "1",
+                        name: "West"
+                    },
+                    {
+                        id: "5",
+                        name: "Pasha"
+                    }, {
+                        id: "6",
+                        name: "Arina"
+                    }
+                ]
+            }, {
+                id: "2",
+                name: "Oil",
+                spent: 9.99,
+                payedBy: [{
+                    id: "5",
+                    name: "Pasha"
+                }],
+                users: [
+                    {
+                        id: "1",
+                        name: "West"
+                    },
+                    {
+                        id: "5",
+                        name: "Pasha"
+                    }, {
+                        id: "6",
+                        name: "Arina"
+                    }
+                ]
+            }],
             enableFamilies: true
         }
     }
@@ -125,6 +188,11 @@ export class App extends React.Component<Props, State> {
                                            updateFamilyName={this.updateFamilyName} addMan={this.addManToFamily}
                                            removeMan={this.removeManFromFamily}/>
                     }
+                    <SpendingsComponent people={this.state.people} spendings={this.state.spendings}
+                                        updateSpendingName={this.updateSpendingName}
+                                        removeSpending={this.removeSpending} addSpending={this.addSpending}
+                                        updateSpendingPrice={this.updateSpendingPrice}
+                                        updatePayedBy={this.updatePayedBy} updateUsedBy={this.updateUsedBy}/>
                 </div>
             }</Translation>
         );
@@ -158,6 +226,7 @@ export class App extends React.Component<Props, State> {
         let updatedPeople = [...this.state.people]
         updatedPeople.splice(oldIndex, 1)
         this.setState({people: updatedPeople})
+        //todo remove it from spendings and from families
     }
 
     toggleEnableFamilies = () => {
@@ -227,6 +296,61 @@ export class App extends React.Component<Props, State> {
         let updatedFamilies = [...this.state.families]
         updatedFamilies[index] = updatedFamily
         this.setState({families: updatedFamilies})
+    }
+
+    addSpending = () => {
+        let newSpending = {
+            id: uuidv4(),
+            name: "",
+            spent: 0,
+            payedBy: [],
+            users: []
+        }
+        let updatedSpendings = [...this.state.spendings, newSpending]
+        this.setState({spendings: updatedSpendings})
+    }
+
+    removeSpending = (spending: Spending) => {
+        let oldIndex = this.state.spendings.indexOf(spending)
+        let updatedSpendings = [...this.state.spendings]
+        updatedSpendings.splice(oldIndex, 1)
+        this.setState({spendings: updatedSpendings})
+    }
+
+    updateSpendingName = (spending: Spending, newName: string) => {
+        let updatedSpending = {...spending, name: newName}
+
+        let index = this.state.spendings.indexOf(spending);
+        let updatedSpendings = [...this.state.spendings]
+        updatedSpendings[index] = updatedSpending
+        this.setState({spendings: updatedSpendings})
+    }
+
+    updateSpendingPrice = (spending: Spending, newPrice: number) => {
+        let updatedSpending = {...spending, spent: newPrice}
+
+        let index = this.state.spendings.indexOf(spending);
+        let updatedSpendings = [...this.state.spendings]
+        updatedSpendings[index] = updatedSpending
+        this.setState({spendings: updatedSpendings})
+    }
+
+    updatePayedBy = (spending: Spending, payedBy: Man[]) => {
+        let updatedSpending = {...spending, payedBy: payedBy}
+
+        let index = this.state.spendings.indexOf(spending);
+        let updatedSpendings = [...this.state.spendings]
+        updatedSpendings[index] = updatedSpending
+        this.setState({spendings: updatedSpendings})
+    }
+
+    updateUsedBy = (spending: Spending, usedBy: Man[]) => {
+        let updatedSpending = {...spending, users: usedBy}
+
+        let index = this.state.spendings.indexOf(spending);
+        let updatedSpendings = [...this.state.spendings]
+        updatedSpendings[index] = updatedSpending
+        this.setState({spendings: updatedSpendings})
     }
 }
 

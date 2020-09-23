@@ -37,11 +37,11 @@ export class PeopleComponent extends React.Component<PeopleComponentProps> {
                                     </div>
                                 ))}
                             </div>
-                        </div>
-                        <div className="card-footer">
-                            <button type="button" className="btn btn-primary" onClick={() => this.props.addMan()}>
-                                {t('people.add')}
-                            </button>
+                            <div className="card-footer">
+                                <button type="button" className="btn btn-primary" onClick={() => this.props.addMan()}>
+                                    {t('people.add')}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 }

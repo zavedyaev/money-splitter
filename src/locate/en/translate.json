@@ -16,6 +16,15 @@
       "members": "Members of selected family",
       "add": "Add a new family...",
       "namePlaceholder": "Family Name"
+    },
+    "spendings": {
+      "header": "Spendings",
+      "add": "Add a spending...",
+      "namePlaceholder": "Spending",
+      "price": "Price",
+      "currency": "$",
+      "payedBy": "Payed by",
+      "usedBy": "Used by"
     }
   }
 }

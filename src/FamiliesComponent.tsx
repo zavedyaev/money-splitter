@@ -109,11 +109,12 @@ export class FamiliesComponent extends React.Component<FamiliesComponentProps, F
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div className="card-footer">
-                            <button type="button" className="btn btn-primary" onClick={() => this.props.addFamily()}>
-                                {t('families.add')}
-                            </button>
+                            <div className="card-footer">
+                                <button type="button" className="btn btn-primary"
+                                        onClick={() => this.props.addFamily()}>
+                                    {t('families.add')}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 }

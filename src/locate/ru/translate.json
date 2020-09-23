@@ -16,6 +16,15 @@
       "members": "Члены выбранной семьи",
       "add": "Добавить семью...",
       "namePlaceholder": "Фамилия"
+    },
+    "spendings": {
+      "header": "Траты",
+      "add": "Добавить трату...",
+      "namePlaceholder": "Трата",
+      "price": "Цена",
+      "currency": "₽",
+      "payedBy": "Оплатил",
+      "usedBy": "Потребители"
     }
   }
 }
