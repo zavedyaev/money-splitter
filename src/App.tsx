@@ -43,123 +43,42 @@ export class App extends React.Component<Props, State> {
             families: [{
                 id: "1",
                 name: "Zavedyaev",
-                members: [
-                    {
-                        id: "1",
-                        name: "West"
-                    }, {
-                        id: "2",
-                        name: "Lena"
-                    }
-                ]
+                members: ["1", "2"]
             }, {
                 id: "2",
                 name: "Miheev",
-                members: [
-                    {
-                        id: "3",
-                        name: "Sasha"
-                    }, {
-                        id: "4",
-                        name: "Nastya"
-                    }
-                ]
+                members: ["3", "4"]
             }, {
                 id: "3",
                 name: "Baldin",
-                members: [
-                    {
-                        id: "7",
-                        name: "Serega"
-                    }, {
-                        id: "8",
-                        name: "Anya"
-                    }
-                ]
+                members: ["7", "8"]
             }, {
                 id: "4",
                 name: "Nikiforov",
-                members: [
-                    {
-                        id: "5",
-                        name: "Pasha"
-                    }, {
-                        id: "6",
-                        name: "Arina"
-                    }
-                ]
+                members: ["5", "6"]
             }, {
                 id: "5",
                 name: "Albina",
-                members: [
-                    {
-                        id: "9",
-                        name: "Albina"
-                    }
-                ]
+                members: ["9"]
             }],
             spendings: [{
                 id: "1",
                 name: "Tea",
                 spent: 10.5,
-                payedBy: [{
-                    id: "1",
-                    name: "West"
-                }],
-                users: [
-                    {
-                        id: "5",
-                        name: "Pasha"
-                    }, {
-                        id: "6",
-                        name: "Arina"
-                    }
-                ]
+                payedBy: ["1"],
+                users: ["5", "6"]
             }, {
                 id: "2",
                 name: "Pineapple",
                 spent: 89.99,
-                payedBy: [{
-                    id: "1",
-                    name: "West"
-                }, {
-                    id: "5",
-                    name: "Pasha"
-                }],
-                users: [
-                    {
-                        id: "1",
-                        name: "West"
-                    },
-                    {
-                        id: "5",
-                        name: "Pasha"
-                    }, {
-                        id: "6",
-                        name: "Arina"
-                    }
-                ]
+                payedBy: ["1", "5"],
+                users: ["1", "5", "6"]
             }, {
                 id: "2",
                 name: "Oil",
                 spent: 9.99,
-                payedBy: [{
-                    id: "5",
-                    name: "Pasha"
-                }],
-                users: [
-                    {
-                        id: "1",
-                        name: "West"
-                    },
-                    {
-                        id: "5",
-                        name: "Pasha"
-                    }, {
-                        id: "6",
-                        name: "Arina"
-                    }
-                ]
+                payedBy: ["5"],
+                users: ["1", "5", "6"]
             }],
             enableFamilies: true
         }
@@ -183,7 +102,8 @@ export class App extends React.Component<Props, State> {
                         </label>
                     </div>
                     {!this.state.enableFamilies ? "" :
-                        <FamiliesComponent people={peopleNotInFamilies} families={this.state.families}
+                        <FamiliesComponent people={this.state.people} signlePeople={peopleNotInFamilies}
+                                           families={this.state.families}
                                            addFamily={this.addFamily} removeFamily={this.removeFamily}
                                            updateFamilyName={this.updateFamilyName} addMan={this.addManToFamily}
                                            removeMan={this.removeManFromFamily}/>
@@ -225,8 +145,41 @@ export class App extends React.Component<Props, State> {
         let oldIndex = this.state.people.indexOf(man)
         let updatedPeople = [...this.state.people]
         updatedPeople.splice(oldIndex, 1)
-        this.setState({people: updatedPeople})
-        //todo remove it from spendings and from families
+
+        let updatedFamilies = [...this.state.families]
+        this.state.families.forEach((family, familyIndex) => {
+            let manIndex = family.members.indexOf(man.id)
+            if (manIndex >= 0) {
+                let updatedFamily = {...family};
+                let updatedMembers = [...updatedFamily.members]
+                updatedMembers.splice(manIndex, 1)
+                updatedFamily.members = updatedMembers
+                updatedFamilies[familyIndex] = updatedFamily
+            }
+        })
+
+        let updatedSpendings = [...this.state.spendings]
+        this.state.spendings.forEach((spending, spendingIndex) => {
+            let updatedSpending = {...spending};
+
+            let payedByIndex = spending.payedBy.indexOf(man.id)
+            if (payedByIndex >= 0) {
+                let updatedMembers = [...updatedSpending.payedBy]
+                updatedMembers.splice(payedByIndex, 1)
+                updatedSpending.payedBy = updatedMembers
+            }
+
+            let userIndex = spending.users.indexOf(man.id)
+            if (userIndex >= 0) {
+                let updatedMembers = [...updatedSpending.users]
+                updatedMembers.splice(userIndex, 1)
+                updatedSpending.users = updatedMembers
+            }
+
+            updatedSpendings[spendingIndex] = updatedSpending
+        })
+
+        this.setState({people: updatedPeople, families: updatedFamilies, spendings: updatedSpendings})
     }
 
     toggleEnableFamilies = () => {
@@ -235,7 +188,7 @@ export class App extends React.Component<Props, State> {
 
     peopleNotInFamilies = () => {
         let allPeople = this.state.people
-        let peopleInFamilyIds = this.state.families.flatMap(value => value.members).map(value => value.id)
+        let peopleInFamilyIds = this.state.families.flatMap(value => value.members)
         return allPeople.filter(value => !peopleInFamilyIds.includes(value.id))
     }
 
@@ -276,7 +229,7 @@ export class App extends React.Component<Props, State> {
         let updatedFamily = {
             id: family.id,
             name: family.name,
-            members: [...family.members, man]
+            members: [...family.members, man.id]
         }
         let index = this.state.families.indexOf(family);
 
@@ -285,8 +238,8 @@ export class App extends React.Component<Props, State> {
         this.setState({families: updatedFamilies})
     }
 
-    removeManFromFamily = (family: Family, man: Man) => {
-        let updatedMembers = family.members.filter(value => value !== man)
+    removeManFromFamily = (family: Family, manId: string) => {
+        let updatedMembers = family.members.filter(value => value !== manId)
         let updatedFamily = {
             id: family.id,
             name: family.name,
@@ -336,7 +289,7 @@ export class App extends React.Component<Props, State> {
     }
 
     updatePayedBy = (spending: Spending, payedBy: Man[]) => {
-        let updatedSpending = {...spending, payedBy: payedBy}
+        let updatedSpending = {...spending, payedBy: payedBy.map(value => value.id)}
 
         let index = this.state.spendings.indexOf(spending);
         let updatedSpendings = [...this.state.spendings]
@@ -345,7 +298,7 @@ export class App extends React.Component<Props, State> {
     }
 
     updateUsedBy = (spending: Spending, usedBy: Man[]) => {
-        let updatedSpending = {...spending, users: usedBy}
+        let updatedSpending = {...spending, users: usedBy.map(value => value.id)}
 
         let index = this.state.spendings.indexOf(spending);
         let updatedSpendings = [...this.state.spendings]

@@ -60,20 +60,20 @@ export class FamiliesComponent extends React.Component<FamiliesComponentProps, F
                                 <div hidden={!this.state.selectedFamilyId}>
                                     <h6>{t('families.members')}</h6>
                                     <div className="form-row">
-                                        {this.props.families.find(value => value.id === this.state.selectedFamilyId)?.members.map((man, index) => (
+                                        {selectedFamily?.members.map((manId, index) => (
                                             <div className="input-group col-sm-6 col-md-4 col-lg-3 col-xl-2"
                                                  key={"member-of-selected-family-" + index}>
                                                 <input type="text"
                                                        className="form-control"
                                                        aria-describedby={"delete-family-member-" + index + "-button"}
-                                                       value={man.name}
+                                                       value={this.props.people.find(it => it.id === manId)?.name}
                                                        readOnly={true}
                                                 />
 
                                                 <div className="input-group-append">
                                                     <button className="btn btn-outline-danger" type="button"
                                                             id={"delete-family-member-" + index + "-button"}
-                                                            onClick={() => this.props.removeMan(selectedFamily!!, man)}>
+                                                            onClick={() => this.props.removeMan(selectedFamily!!, manId)}>
                                                         X
                                                     </button>
                                                 </div>
@@ -81,10 +81,10 @@ export class FamiliesComponent extends React.Component<FamiliesComponentProps, F
                                         ))}
                                     </div>
                                 </div>
-                                <div hidden={this.props.people.length === 0}>
+                                <div hidden={this.props.signlePeople.length === 0}>
                                     <h6>{t('families.singlePeople')}</h6>
                                     <div className="form-row">
-                                        {this.props.people.map((man, index) => (
+                                        {this.props.signlePeople.map((man, index) => (
                                             <div className="input-group col-sm-6 col-md-4 col-lg-3 col-xl-2"
                                                  key={"single-man-" + index}>
                                                 <input type="text"
@@ -136,12 +136,13 @@ export class FamiliesComponent extends React.Component<FamiliesComponentProps, F
 
 interface FamiliesComponentProps extends WithTranslation {
     people: Man[];
+    signlePeople: Man[];
     families: Family[];
     updateFamilyName: (id: string, newName: string) => void;
     addFamily: () => void;
     removeFamily: (family: Family) => void;
     addMan: (family: Family, man: Man) => void;
-    removeMan: (family: Family, man: Man) => void;
+    removeMan: (family: Family, manId: string) => void;
 }
 
 interface FamiliesComponentState {

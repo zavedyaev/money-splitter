@@ -1,6 +1,7 @@
 {
   "name": "money-splitter",
   "version": "2.0.0",
+  "homepage": "http://zavedyaev.ru/money-splitter-2",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
@@ -19,6 +20,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-i18next": "^11.7.2",
+    "react-multi-select-component": "^3.0.2",
     "react-scripts": "3.4.3",
     "typescript": "^3.7.5",
     "uuid": "^8.3.0"

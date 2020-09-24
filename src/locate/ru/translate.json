@@ -1,5 +1,10 @@
 {
   "translations": {
+    "choose": "Выберете...",
+    "all": "Все",
+    "selectAll": "Выбрать Всех",
+    "search": "Поиск",
+    "clearSearch": "Очистить",
     "description": {
       "title": "Money-Splitter",
       "value": "Money-Splitter поможет вам быстро и честно разделить чек между друзьями. Очень полезно при совместных путешествиях и походах в кафе/рестораны."

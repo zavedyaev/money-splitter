@@ -1,9 +1,12 @@
 import React from 'react';
 import {Translation, withTranslation, WithTranslation} from 'react-i18next';
 import {Man, Spending} from "./Models";
+import MultiSelect from "react-multi-select-component";
 
 export class SpendingsComponent extends React.Component<SpendingsComponentProps> {
     render() {
+        let peopleOptions = this.props.people.map(man => ({label: man.name, value: man.id}));
+
         return (
             <Translation>
                 {t =>
@@ -56,38 +59,40 @@ export class SpendingsComponent extends React.Component<SpendingsComponentProps>
                                                     <label htmlFor={"payedByInput" + index}
                                                            className="col-sm-4 col-md-5 col-form-label">{t('spendings.payedBy')}</label>
                                                     <div className="col-sm-8 col-md-7">
-                                                        {/*todo replace by react-multi-select-component*/}
-                                                        <select multiple
-                                                                className={"form-control " + (spending.payedBy.length > 0 ? "" : "is-invalid")}
-                                                                id={"payedByInput" + index}
-                                                                value={spending.payedBy.map(value => value.id)}
-                                                                onChange={e => this.props.updatePayedBy(spending, this.parseSelectedPeople(e.target.options))}>
-                                                            {this.props.people.map((man, manIndex) => (
-                                                                <option key={"payedBy-option-" + index + "-" + manIndex}
-                                                                        value={man.id}>
-                                                                    {man.name}
-                                                                </option>
-                                                            ))}
-                                                        </select>
+                                                        <MultiSelect
+                                                            className={"multiselect " + (spending.payedBy.length > 0 ? "" : "is-invalid")}
+                                                            options={peopleOptions}
+                                                            value={peopleOptions.filter(option => spending.payedBy.find(value => value === option.value ))}
+                                                            onChange={(e: any) => this.props.updatePayedBy(spending, this.parseSelectedPeople(e))}
+                                                            labelledBy={t('choose')}
+                                                            disableSearch
+                                                            overrideStrings={{selectSomeItems: t('choose'),
+                                                                allItemsAreSelected: t('all'),
+                                                                selectAll: t('selectAll'),
+                                                                search: t('search'),
+                                                                clearSearch: t('clearSearch')
+                                                            }}
+                                                        />
                                                     </div>
                                                 </div>
                                                 <div className="form-group row">
                                                     <label htmlFor={"usedByInput" + index}
                                                            className="col-sm-4 col-md-5 col-form-label">{t('spendings.usedBy')}</label>
                                                     <div className="col-sm-8 col-md-7">
-                                                        {/*todo replace by react-multi-select-component*/}
-                                                        <select multiple
-                                                                className={"form-control " + (spending.users.length > 0 ? "" : "is-invalid")}
-                                                                id={"usedByInput" + index}
-                                                                value={spending.users.map(value => value.id)}
-                                                                onChange={e => this.props.updateUsedBy(spending, this.parseSelectedPeople(e.target.options))}>
-                                                            {this.props.people.map((man, manIndex) => (
-                                                                <option key={"usedBy-option-" + index + "-" + manIndex}
-                                                                        value={man.id}>
-                                                                    {man.name}
-                                                                </option>
-                                                            ))}
-                                                        </select>
+                                                        <MultiSelect
+                                                            className={"multiselect " + (spending.users.length > 0 ? "" : "is-invalid")}
+                                                            options={peopleOptions}
+                                                            value={peopleOptions.filter(option => spending.users.find(value => value === option.value ))}
+                                                            onChange={(e: any) => this.props.updateUsedBy(spending, this.parseSelectedPeople(e))}
+                                                            labelledBy={t('choose')}
+                                                            disableSearch
+                                                            overrideStrings={{selectSomeItems: t('choose'),
+                                                                allItemsAreSelected: t('all'),
+                                                                selectAll: t('selectAll'),
+                                                                search: t('search'),
+                                                                clearSearch: t('clearSearch')
+                                                            }}
+                                                        />
                                                     </div>
                                                 </div>
                                             </form>
@@ -105,12 +110,10 @@ export class SpendingsComponent extends React.Component<SpendingsComponentProps>
         );
     }
 
-    parseSelectedPeople = (options: HTMLOptionsCollection): Man[] => {
+    parseSelectedPeople = (options: any[]): Man[] => {
         let selectedPeopleIds: string[] = []
         for (let i = 0; i < options.length; i++) {
-            if (options[i].selected) {
-                selectedPeopleIds.push(options[i].value);
-            }
+            selectedPeopleIds.push(options[i].value);
         }
         return this.props.people.filter(man => selectedPeopleIds.find(selectedId => selectedId === man.id))
     }

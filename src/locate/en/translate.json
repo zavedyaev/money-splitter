@@ -1,5 +1,10 @@
 {
   "translations": {
+    "choose": "Choose...",
+    "all": "All",
+    "selectAll": "Select All",
+    "search": "Search",
+    "clearSearch": "Clear",
     "description": {
       "title": "Money-Splitter",
       "value": "This app will help you to split a receipt between friends fast and fairly."
