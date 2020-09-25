@@ -1,11 +1,13 @@
 import React from 'react';
-import './App.css';
 import {Translation, withTranslation, WithTranslation} from 'react-i18next';
-import {Family, Man, Spending} from "./Models";
+import {Family, Man, OptimizedTransactions, Spending, Summary, SummaryRowFamily, SummaryRowMan} from "./Models";
 import PeopleComponent from "./PeopleComponent";
 import {v4 as uuidv4} from 'uuid';
 import FamiliesComponent from "./FamiliesComponent";
 import SpendingsComponent from "./SpendingsComponent";
+import SummaryComponent from "./SummaryComponent";
+import {Helpers} from "./Helpers";
+import TransactionsComponent from "./TransactionsComponent";
 
 export class App extends React.Component<Props, State> {
 
@@ -113,6 +115,12 @@ export class App extends React.Component<Props, State> {
                                         removeSpending={this.removeSpending} addSpending={this.addSpending}
                                         updateSpendingPrice={this.updateSpendingPrice}
                                         updatePayedBy={this.updatePayedBy} updateUsedBy={this.updateUsedBy}/>
+
+                    <SummaryComponent people={this.state.people} enableFamilies={this.state.enableFamilies}
+                                      families={this.state.families} summary={this.summary()}/>
+
+                    <TransactionsComponent transactions={this.optimizedTransactions(this.summary())}
+                                           enableFamilies={this.state.enableFamilies}/>
                 </div>
             }</Translation>
         );
@@ -304,6 +312,115 @@ export class App extends React.Component<Props, State> {
         let updatedSpendings = [...this.state.spendings]
         updatedSpendings[index] = updatedSpending
         this.setState({spendings: updatedSpendings})
+    }
+
+    summary = () => {
+        let summaryRowsForPeople: SummaryRowMan[] = this.state.people.map(man => ({
+            manId: man.id,
+            paid: 0,
+            used: 0,
+            difference: 0
+
+        }));
+        this.state.spendings.forEach(spending => {
+            let payedByMan = spending.spent / spending.payedBy.length
+            let spentByMan = spending.spent / spending.users.length
+
+            spending.payedBy.forEach(manId => {
+                let payedMan = summaryRowsForPeople.find(it => it.manId === manId)
+                payedMan!!.paid += payedByMan
+                payedMan!!.difference += payedByMan
+            })
+
+            spending.users.forEach(manId => {
+                let user = summaryRowsForPeople.find(it => it.manId === manId)
+                user!!.used += spentByMan
+                user!!.difference -= spentByMan
+            })
+        })
+
+        let rows: (SummaryRowMan | SummaryRowFamily)[] = [];
+
+        if (this.state.enableFamilies) {
+            let validFamilies = this.state.families.filter(family => family.members.length > 0)
+
+            let summaryRowsForFamilies: SummaryRowFamily[] = validFamilies.map(family => {
+                let paid = 0
+                let used = 0
+                let summaryForMembers: SummaryRowMan[] = []
+                family.members.forEach(manId => {
+                    let summary = summaryRowsForPeople.find(summaryForMan => summaryForMan.manId === manId)!!
+                    paid += summary.paid
+                    used += summary.used
+                    summaryForMembers.push(summary)
+                    summaryRowsForPeople.splice(summaryRowsForPeople.indexOf(summary), 1)
+                })
+                return {
+                    familyId: family.id,
+                    paid: paid,
+                    used: used,
+                    difference: paid - used,
+                    summaryForMembers: summaryForMembers
+                }
+            });
+            summaryRowsForFamilies.forEach(row => rows.push(row))
+        }
+        summaryRowsForPeople.forEach(row => rows.push(row))
+
+        return {
+            rows: rows
+        } as Summary
+    }
+
+    optimizedTransactions = (summary: Summary) => {
+        let rowsWithDebts: (SummaryRowMan | SummaryRowFamily)[] = summary.rows.filter(row => !Helpers.zero(row.difference)).map(row => ({...row}))
+        let result = [] as OptimizedTransactions[];
+        while (rowsWithDebts.length > 0) {
+            rowsWithDebts.sort((a, b) => {
+                return b.difference - a.difference
+            })
+            let maxCreditor = rowsWithDebts[0];
+            let maxDebtor = rowsWithDebts[rowsWithDebts.length - 1];
+
+            let sum;
+            if (maxCreditor.difference > -(maxDebtor.difference)) {
+                sum = -(maxDebtor.difference);
+                rowsWithDebts.splice(rowsWithDebts.length - 1, 1);
+
+                let newDifference = maxCreditor.difference - sum;
+                if (Helpers.zero(newDifference)) {
+                    rowsWithDebts.splice(0, 1);
+                } else {
+                    maxCreditor.difference = newDifference
+                }
+            } else {
+                sum = maxCreditor.difference;
+                rowsWithDebts.splice(0, 1);
+                let newDifference = maxDebtor.difference + sum;
+                if (Helpers.zero(Math.abs(newDifference))) {
+                    rowsWithDebts.splice(rowsWithDebts.length - 1, 1);
+                } else {
+                    maxDebtor.difference = newDifference
+                }
+            }
+
+            rowsWithDebts = rowsWithDebts.filter(row => !Helpers.zero(row.difference));
+
+            result.push({
+                debtorManOrFamilyName: "familyId" in maxDebtor ? this.nameByFamilyId(maxDebtor.familyId) : this.nameByManId(maxDebtor.manId),
+                creditorManOrFamilyName: "familyId" in maxCreditor ? this.nameByFamilyId(maxCreditor.familyId) : this.nameByManId(maxCreditor.manId),
+                debt: sum
+            } as OptimizedTransactions)
+        }
+
+        return result;
+    }
+
+    nameByFamilyId = (familyId: string) => {
+        return this.state.families.find(family => family.id === familyId)!!.name
+    }
+    nameByManId = (manId: string) => {
+        return this.state.people.find(man => man.id === manId)!!.name
     }
 }
 

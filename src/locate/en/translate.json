@@ -30,6 +30,23 @@
       "currency": "$",
       "payedBy": "Payed by",
       "usedBy": "Used by"
+    },
+    "summary": {
+      "header": "Summary",
+      "familyOrMan": "Family / Man",
+      "man": "Man",
+      "paid": "Paid",
+      "spent": "Spent",
+      "difference": "Difference"
+    },
+    "transactions": {
+      "header": "Optimized Debts",
+      "description": "Here you can see a list with optimized transactions you and your friends should make to pay all debts between each other",
+      "debtorFamilyOrMan": "Debtor Family / Man",
+      "debtorMan": "Debtor",
+      "creditorFamilyOrMan": "Creditor Family / Man",
+      "creditorMan": "Creditor",
+      "debt": "Debt"
     }
   }
 }
