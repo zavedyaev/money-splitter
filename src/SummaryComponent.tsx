@@ -18,7 +18,7 @@ export class SummaryComponent extends React.Component<SummaryComponentProps, Sum
             <Translation>
                 {t =>
                     <div>
-                        <h4>{t('summary.header')}</h4>
+                        <h4 className="mt-2">{t('summary.header')}</h4>
                         <div className="alert alert-primary" role="alert" hidden={!this.props.showTips}>
                             {t('summary.description')}
                         </div>

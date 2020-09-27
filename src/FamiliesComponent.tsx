@@ -31,7 +31,7 @@ export class FamiliesComponent extends React.Component<FamiliesComponentProps, F
                                     </div>
                                     <div className="form-row">
                                         {this.props.families.map((family, index) => (
-                                            <div className="input-group col-sm-6 col-md-6 col-lg-4 col-xl-3"
+                                            <div className="input-group col-sm-6 col-md-6 col-lg-4 col-xl-3 mb-2"
                                                  key={"family-" + index}>
                                                 <div className="input-group-prepend">
                                                     <div className="input-group-text">
@@ -65,7 +65,7 @@ export class FamiliesComponent extends React.Component<FamiliesComponentProps, F
                                     <h6>{t('families.members')}</h6>
                                     <div className="form-row">
                                         {selectedFamily?.members.map((manId, index) => (
-                                            <div className="input-group col-sm-6 col-md-4 col-lg-3 col-xl-2"
+                                            <div className="input-group col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-2"
                                                  key={"member-of-selected-family-" + index}>
                                                 <input type="text"
                                                        className="form-control"
@@ -89,7 +89,7 @@ export class FamiliesComponent extends React.Component<FamiliesComponentProps, F
                                     <h6>{t('families.singlePeople')}</h6>
                                     <div className="form-row">
                                         {this.props.signlePeople.map((man, index) => (
-                                            <div className="input-group col-sm-6 col-md-4 col-lg-3 col-xl-2"
+                                            <div className="input-group col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-2"
                                                  key={"single-man-" + index}>
                                                 <input type="text"
                                                        className={man.name.length > 0 ? "form-control" : "form-control is-invalid"}

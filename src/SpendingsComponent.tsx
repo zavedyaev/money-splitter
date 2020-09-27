@@ -11,7 +11,7 @@ export class SpendingsComponent extends React.Component<SpendingsComponentProps>
             <Translation>
                 {t =>
                     <div>
-                        <h5>
+                        <h5 className="mt-2">
                             {t('spendings.header')}
                         </h5>
                         <div className="alert alert-primary" role="alert" hidden={!this.props.showTips}>
@@ -43,10 +43,11 @@ export class SpendingsComponent extends React.Component<SpendingsComponentProps>
                                         </div>
                                         <div className="card-body">
                                             <form onSubmit={e => { e.preventDefault()}}>
-                                                <div className="form-group row">
-                                                    <label htmlFor={"priceInput" + index}
-                                                           className="col-sm-4 col-md-5 col-form-label">{t('spendings.price')}</label>
-                                                    <div className="input-group col-sm-8 col-md-7">
+                                                <div className="form-group">
+                                                    <label htmlFor={"priceInput" + index}>
+                                                        {t('spendings.price')}
+                                                    </label>
+                                                    <div className="input-group">
                                                         <input type="number"
                                                                className={"form-control " + (spending.spent > 0 ? "" : "is-invalid")}
                                                                id={"priceInput" + index}
@@ -60,45 +61,43 @@ export class SpendingsComponent extends React.Component<SpendingsComponentProps>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div className="form-group row">
-                                                    <label htmlFor={"payedByInput" + index}
-                                                           className="col-sm-4 col-md-5 col-form-label">{t('spendings.payedBy')}</label>
-                                                    <div className="col-sm-8 col-md-7">
-                                                        <MultiSelect
-                                                            className={"multiselect " + (spending.payedBy.length > 0 ? "" : "is-invalid")}
-                                                            options={peopleOptions}
-                                                            value={peopleOptions.filter(option => spending.payedBy.find(value => value === option.value ))}
-                                                            onChange={(e: any) => this.props.updatePayedBy(spending, this.parseSelectedPeople(e))}
-                                                            labelledBy={t('choose')}
-                                                            disableSearch
-                                                            overrideStrings={{selectSomeItems: t('choose'),
-                                                                allItemsAreSelected: t('all'),
-                                                                selectAll: t('selectAll'),
-                                                                search: t('search'),
-                                                                clearSearch: t('clearSearch')
-                                                            }}
-                                                        />
-                                                    </div>
+                                                <div className="form-group">
+                                                    <label htmlFor={"payedByInput" + index}>
+                                                        {t('spendings.payedBy')}
+                                                    </label>
+                                                    <MultiSelect
+                                                        className={"multiselect " + (spending.payedBy.length > 0 ? "" : "is-invalid")}
+                                                        options={peopleOptions}
+                                                        value={peopleOptions.filter(option => spending.payedBy.find(value => value === option.value ))}
+                                                        onChange={(e: any) => this.props.updatePayedBy(spending, this.parseSelectedPeople(e))}
+                                                        labelledBy={t('choose')}
+                                                        disableSearch
+                                                        overrideStrings={{selectSomeItems: t('choose'),
+                                                            allItemsAreSelected: t('all'),
+                                                            selectAll: t('selectAll'),
+                                                            search: t('search'),
+                                                            clearSearch: t('clearSearch')
+                                                        }}
+                                                    />
                                                 </div>
-                                                <div className="form-group row">
-                                                    <label htmlFor={"usedByInput" + index}
-                                                           className="col-sm-4 col-md-5 col-form-label">{t('spendings.usedBy')}</label>
-                                                    <div className="col-sm-8 col-md-7">
-                                                        <MultiSelect
-                                                            className={"multiselect " + (spending.users.length > 0 ? "" : "is-invalid")}
-                                                            options={peopleOptions}
-                                                            value={peopleOptions.filter(option => spending.users.find(value => value === option.value ))}
-                                                            onChange={(e: any) => this.props.updateUsedBy(spending, this.parseSelectedPeople(e))}
-                                                            labelledBy={t('choose')}
-                                                            disableSearch
-                                                            overrideStrings={{selectSomeItems: t('choose'),
-                                                                allItemsAreSelected: t('all'),
-                                                                selectAll: t('selectAll'),
-                                                                search: t('search'),
-                                                                clearSearch: t('clearSearch')
-                                                            }}
-                                                        />
-                                                    </div>
+                                                <div className="form-group">
+                                                    <label htmlFor={"usedByInput" + index}>
+                                                        {t('spendings.usedBy')}
+                                                    </label>
+                                                    <MultiSelect
+                                                        className={"multiselect " + (spending.users.length > 0 ? "" : "is-invalid")}
+                                                        options={peopleOptions}
+                                                        value={peopleOptions.filter(option => spending.users.find(value => value === option.value ))}
+                                                        onChange={(e: any) => this.props.updateUsedBy(spending, this.parseSelectedPeople(e))}
+                                                        labelledBy={t('choose')}
+                                                        disableSearch
+                                                        overrideStrings={{selectSomeItems: t('choose'),
+                                                            allItemsAreSelected: t('all'),
+                                                            selectAll: t('selectAll'),
+                                                            search: t('search'),
+                                                            clearSearch: t('clearSearch')
+                                                        }}
+                                                    />
                                                 </div>
                                             </form>
                                         </div>

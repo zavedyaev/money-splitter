@@ -88,7 +88,7 @@ export class App extends React.Component<Props, State> {
 
                         {!this.showFamilies() ? "" :
                             <div>
-                                <div className="form-check">
+                                <div className="form-check mt-2 mb-2">
                                     <input className="form-check-input" type="checkbox" id="enableFamilies"
                                            checked={this.state.enableFamilies}
                                            onChange={() => this.toggleEnableFamilies()}/>
