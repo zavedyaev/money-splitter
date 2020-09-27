@@ -25,66 +25,69 @@ export class FamiliesComponent extends React.Component<FamiliesComponentProps, F
                         <div id="familiesCollapse" className="collapse show" aria-labelledby="familiesHeading">
                             <div className="card-body">
                                 <div>
-                                    <h6>{t('families.header')}</h6>
                                     <div className="alert alert-primary" role="alert" hidden={!this.props.showTips}>
                                         {t('families.description')}
                                     </div>
-                                    <div className="form-row">
-                                        {this.props.families.map((family, index) => (
-                                            <div className="input-group col-sm-6 col-md-6 col-lg-4 col-xl-3 mb-2"
-                                                 key={"family-" + index}>
-                                                <div className="input-group-prepend">
-                                                    <div className="input-group-text">
-                                                        <input type="radio" name="selectedFamily"
-                                                               checked={family.id === this.state.selectedFamilyId}
-                                                               onChange={() => this.selectFamily(family)}
-                                                        />
+                                    <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
+                                        {this.props.families.map((family, familyIndex) => (
+                                            <div className="col mb-3" key={"family-" + familyIndex}
+                                                 onClick={() => this.selectFamily(family)}>
+                                                <div
+                                                    className={"card " + (this.state.selectedFamilyId === family.id ? "border-primary" : "")}>
+                                                    <div className="card-header">
+                                                        <div className="input-group">
+                                                            <input type="text"
+                                                                   className={"form-control form-control-lg " + (family.name.length > 0 ? "" : "is-invalid")}
+                                                                   placeholder={t('families.namePlaceholder')}
+                                                                   aria-label={t('families.namePlaceholder')}
+                                                                   aria-describedby={"delete-family-" + familyIndex + "-button"}
+                                                                   value={family.name}
+                                                                   autoFocus={this.props.focusOnNewItem}
+                                                                   onChange={event => this.props.updateFamilyName(family.id, event.target.value)}
+                                                            />
+                                                            <div className="input-group-append">
+                                                                <button className="btn btn-outline-danger" type="button"
+                                                                        id={"delete-family-" + familyIndex + "-button"}
+                                                                        onClick={() => this.props.removeFamily(family)}>
+                                                                    X
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="card-body">
+                                                        <form onSubmit={e => {
+                                                            e.preventDefault()
+                                                        }}>
+                                                            {family.members.map((manId, index) => (
+                                                                <div className="form-group"
+                                                                     key={"member-of-family-" + familyIndex + "-" + index}>
+                                                                    <div className="input-group">
+                                                                        <input type="text"
+                                                                               className="form-control"
+                                                                               aria-describedby={"delete-family-" + familyIndex + "-member-" + index + "-button"}
+                                                                               value={this.props.people.find(it => it.id === manId)?.name}
+                                                                               readOnly={true}
+                                                                        />
+
+                                                                        <div className="input-group-append">
+                                                                            <button className="btn btn-outline-danger"
+                                                                                    type="button"
+                                                                                    id={"delete-family-" + familyIndex + "-member-" + index + "-button"}
+                                                                                    onClick={() => this.props.removeMan(family!!, manId)}>
+                                                                                X
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </form>
                                                     </div>
                                                 </div>
-                                                <input type="text"
-                                                       autoFocus={this.props.focusOnNewItem}
-                                                       className={family.name.length > 0 && family.members.length > 0 ? "form-control" : "form-control is-invalid"}
-                                                       placeholder={t('families.namePlaceholder')}
-                                                       aria-label={t('families.namePlaceholder')}
-                                                       aria-describedby={"delete-user-" + index + "-button"}
-                                                       value={family.name}
-                                                       onChange={event => this.props.updateFamilyName(family.id, event.target.value)}
-                                                />
-                                                <div className="input-group-append">
-                                                    <button className="btn btn-outline-danger" type="button"
-                                                            id={"delete-user-" + index + "-button"}
-                                                            onClick={() => this.removeFamily(family)}>
-                                                        X
-                                                    </button>
-                                                </div>
                                             </div>
                                         ))}
                                     </div>
                                 </div>
-                                <div hidden={!this.state.selectedFamilyId}>
-                                    <h6>{t('families.members')}</h6>
-                                    <div className="form-row">
-                                        {selectedFamily?.members.map((manId, index) => (
-                                            <div className="input-group col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-2"
-                                                 key={"member-of-selected-family-" + index}>
-                                                <input type="text"
-                                                       className="form-control"
-                                                       aria-describedby={"delete-family-member-" + index + "-button"}
-                                                       value={this.props.people.find(it => it.id === manId)?.name}
-                                                       readOnly={true}
-                                                />
 
-                                                <div className="input-group-append">
-                                                    <button className="btn btn-outline-danger" type="button"
-                                                            id={"delete-family-member-" + index + "-button"}
-                                                            onClick={() => this.props.removeMan(selectedFamily!!, manId)}>
-                                                        X
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
                                 <div hidden={this.props.signlePeople.length === 0 || this.props.families.length === 0}>
                                     <h6>{t('families.singlePeople')}</h6>
                                     <div className="form-row">
