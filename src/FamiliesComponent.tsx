@@ -26,7 +26,7 @@ export class FamiliesComponent extends React.Component<FamiliesComponentProps, F
                             <div className="card-body">
                                 <div>
                                     <h6>{t('families.header')}</h6>
-                                    <div className="alert alert-primary" role="alert">
+                                    <div className="alert alert-primary" role="alert" hidden={!this.props.showTips}>
                                         {t('families.description')}
                                     </div>
                                     <div className="form-row">
@@ -93,8 +93,8 @@ export class FamiliesComponent extends React.Component<FamiliesComponentProps, F
                                                  key={"single-man-" + index}>
                                                 <input type="text"
                                                        className={man.name.length > 0 ? "form-control" : "form-control is-invalid"}
-                                                       placeholder={t('families.namePlaceholder')}
-                                                       aria-label={t('families.namePlaceholder')}
+                                                       placeholder={t('people.namePlaceholder')}
+                                                       aria-label={t('people.namePlaceholder')}
                                                        aria-describedby={"add-family-member-" + index + "-button"}
                                                        value={man.name}
                                                        readOnly={true}
@@ -144,6 +144,7 @@ export class FamiliesComponent extends React.Component<FamiliesComponentProps, F
 }
 
 interface FamiliesComponentProps extends WithTranslation {
+    showTips: boolean;
     focusOnNewItem: boolean;
     people: Man[];
     signlePeople: Man[];

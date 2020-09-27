@@ -16,7 +16,7 @@ export class PeopleComponent extends React.Component<PeopleComponentProps> {
                         </h5>
                         <div id="peopleCollapse" className="collapse show" aria-labelledby="peopleHeading">
                             <div className="card-body">
-                                <div className="alert alert-primary" role="alert">
+                                <div className="alert alert-primary" role="alert" hidden={!this.props.showTips}>
                                     {t('people.description')}
                                 </div>
                                 <div className="form-row">
@@ -57,6 +57,7 @@ export class PeopleComponent extends React.Component<PeopleComponentProps> {
 }
 
 interface PeopleComponentProps extends WithTranslation {
+    showTips: boolean;
     focusOnNewItem: boolean;
     people: Man[];
     updateName: (id: string, newName: string) => void;

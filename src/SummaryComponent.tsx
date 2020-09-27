@@ -19,7 +19,7 @@ export class SummaryComponent extends React.Component<SummaryComponentProps, Sum
                 {t =>
                     <div>
                         <h4>{t('summary.header')}</h4>
-                        <div className="alert alert-primary" role="alert">
+                        <div className="alert alert-primary" role="alert" hidden={!this.props.showTips}>
                             {t('summary.description')}
                         </div>
                         <div className="table-responsive">
@@ -92,6 +92,7 @@ export class SummaryComponent extends React.Component<SummaryComponentProps, Sum
 }
 
 interface SummaryComponentProps extends WithTranslation {
+    showTips: boolean;
     people: Man[];
     enableFamilies: boolean;
     families: Family[];

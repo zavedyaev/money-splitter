@@ -1,13 +1,25 @@
 {
   "translations": {
+    "zavedyaev": "Zavedyaev",
     "choose": "Choose...",
     "all": "All",
     "selectAll": "Select All",
     "search": "Search",
     "clearSearch": "Clear",
     "description": {
-      "title": "Money-Splitter",
+      "title": "Bill-Splitter",
       "value": "This app will help you to split a receipt between friends fast and fairly."
+    },
+    "nav": {
+      "reset": "Reset",
+      "hideTips": "Hide tips",
+      "showTips": "Show tips",
+      "showExample": "Show example"
+    },
+    "example": {
+      "people": "[{\"id\": \"1\", \"name\": \"John\"}, {\"id\": \"2\", \"name\": \"Helen\"}, {\"id\": \"3\", \"name\": \"Bill\"}, {\"id\": \"4\", \"name\": \"Christopher\"}, {\"id\": \"5\", \"name\": \"Sara\"}]",
+      "families": "[{\"id\": \"1\", \"name\": \"Smith\", \"members\": [\"1\", \"2\"]}, {\"id\": \"2\", \"name\": \"Doe\", \"members\": [\"3\", \"4\"]}]",
+      "spendings": "[{\"id\": \"1\", \"name\": \"Tea\", \"spent\": \"15\", \"payedBy\": [\"1\"], \"users\": [\"2\", \"3\", \"5\"]}, {\"id\": \"2\", \"name\": \"Coffee\", \"spent\": \"30\", \"payedBy\": [\"1\"], \"users\": [\"1\", \"4\"]}, {\"id\": \"3\", \"name\": \"Cheeseburgers\", \"spent\": \"25.9\", \"payedBy\": [\"2\"], \"users\": [\"2\", \"5\"]}, {\"id\": \"4\", \"name\": \"Popcorn\", \"spent\": \"9.99\", \"payedBy\": [\"2\"], \"users\": [\"1\", \"3\", \"4\"]}, {\"id\": \"5\", \"name\": \"Soda\", \"spent\": \"25\", \"payedBy\": [\"4\"], \"users\": [\"3\", \"4\", \"5\"]}]"
     },
     "people": {
       "header": "People",

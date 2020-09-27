@@ -1,13 +1,13 @@
 {
-  "short_name": "Money-Splitter",
-  "name": "Money-Splitter - Zavedyaev",
+  "short_name": "Bill-Splitter",
+  "name": "Bill-Splitter - Zavedyaev",
   "icons": [
     {
       "src": "favicon.png",
       "type": "image/png"
     }
   ],
-  "start_url": "http://zavedyaev.ru/money-splitter-2/index.html",
+  "start_url": "http://zavedyaev.ru/bill-splitter/index.html",
   "display": "standalone",
   "theme_color": "#000000",
   "background_color": "#ffffff"

@@ -12,7 +12,7 @@ export class TransactionsComponent extends React.Component<TransactionsComponent
                 {t =>
                     <div>
                         <h4>{t('transactions.header')}</h4>
-                        <div className="alert alert-primary" role="alert">
+                        <div className="alert alert-primary" role="alert" hidden={!this.props.showTips}>
                             {t('transactions.description')}
                         </div>
                         <div className="table-responsive">
@@ -47,6 +47,7 @@ export class TransactionsComponent extends React.Component<TransactionsComponent
 }
 
 interface TransactionsComponentProps extends WithTranslation {
+    showTips: boolean;
     transactions: OptimizedTransactions[];
     enableFamilies: boolean;
 }

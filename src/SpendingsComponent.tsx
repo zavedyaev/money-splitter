@@ -14,7 +14,7 @@ export class SpendingsComponent extends React.Component<SpendingsComponentProps>
                         <h5>
                             {t('spendings.header')}
                         </h5>
-                        <div className="alert alert-primary" role="alert">
+                        <div className="alert alert-primary" role="alert" hidden={!this.props.showTips}>
                             {t('spendings.description')}
                         </div>
                         <div className="row row-cols-1 row-cols-md-2 row-cols-xl-3">
@@ -140,6 +140,7 @@ export class SpendingsComponent extends React.Component<SpendingsComponentProps>
 }
 
 interface SpendingsComponentProps extends WithTranslation {
+    showTips: boolean;
     focusOnNewItem: boolean;
     people: Man[];
     spendings: Spending[];
