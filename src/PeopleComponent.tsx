@@ -15,27 +15,33 @@ export class PeopleComponent extends React.Component<PeopleComponentProps> {
                             </a>
                         </h5>
                         <div id="peopleCollapse" className="collapse show" aria-labelledby="peopleHeading">
-                            <div className="card-body form-row">
-                                {this.props.people.map((man, index) => (
-                                    <div className="input-group col-sm-6 col-md-4 col-lg-3 col-xl-2"
-                                         key={"man-" + index}>
-                                        <input type="text"
-                                               className={man.name.length > 0 ? "form-control" : "form-control is-invalid"}
-                                               placeholder={t('people.namePlaceholder')}
-                                               aria-label={t('people.namePlaceholder')}
-                                               aria-describedby={"delete-user-" + index + "-button"}
-                                               value={man.name}
-                                               onChange={event => this.props.updateName(man.id, event.target.value)}
-                                        />
-                                        <div className="input-group-append">
-                                            <button className="btn btn-outline-danger" type="button"
-                                                    id={"delete-user-" + index + "-button"}
-                                                    onClick={() => this.props.removeMan(man)}>
-                                                X
-                                            </button>
+                            <div className="card-body">
+                                <div className="alert alert-primary" role="alert">
+                                    {t('people.description')}
+                                </div>
+                                <div className="form-row">
+                                    {this.props.people.map((man, index) => (
+                                        <div className="input-group col-sm-6 col-md-4 col-lg-3 col-xl-2"
+                                             key={"man-" + index}>
+                                            <input type="text"
+                                                   autoFocus={this.props.focusOnNewItem}
+                                                   className={man.name.length > 0 ? "form-control" : "form-control is-invalid"}
+                                                   placeholder={t('people.namePlaceholder')}
+                                                   aria-label={t('people.namePlaceholder')}
+                                                   aria-describedby={"delete-user-" + index + "-button"}
+                                                   value={man.name}
+                                                   onChange={event => this.props.updateName(man.id, event.target.value)}
+                                            />
+                                            <div className="input-group-append">
+                                                <button className="btn btn-outline-danger" type="button"
+                                                        id={"delete-user-" + index + "-button"}
+                                                        onClick={() => this.props.removeMan(man)}>
+                                                    X
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
                             </div>
                             <div className="card-footer">
                                 <button type="button" className="btn btn-primary" onClick={() => this.props.addMan()}>
@@ -51,6 +57,7 @@ export class PeopleComponent extends React.Component<PeopleComponentProps> {
 }
 
 interface PeopleComponentProps extends WithTranslation {
+    focusOnNewItem: boolean;
     people: Man[];
     updateName: (id: string, newName: string) => void;
     addMan: () => void;

@@ -82,7 +82,13 @@ export class App extends React.Component<Props, State> {
                 payedBy: ["5"],
                 users: ["1", "5", "6"]
             }],
-            enableFamilies: true
+            // people: [],
+            // spendings: [],
+            // families: [],
+            enableFamilies: false,
+            focusOnNewMan: true,
+            focusOnNewFamily: false,
+            focusOnNewSpending: false
         }
     }
 
@@ -94,36 +100,74 @@ export class App extends React.Component<Props, State> {
                     <h1>{t('description.title')}</h1>
                     <p>{t('description.value')}</p>
                     <PeopleComponent people={this.state.people} updateName={this.updateManName} addMan={this.addMan}
-                                     removeMan={this.removeMan}/>
-                    <div className="form-check">
-                        <input className="form-check-input" type="checkbox" id="enableFamilies"
-                               checked={this.state.enableFamilies}
-                               onChange={() => this.toggleEnableFamilies()}/>
-                        <label className="form-check-label" htmlFor="enableFamilies">
-                            {t('families.enable')}
-                        </label>
-                    </div>
-                    {!this.state.enableFamilies ? "" :
-                        <FamiliesComponent people={this.state.people} signlePeople={peopleNotInFamilies}
-                                           families={this.state.families}
-                                           addFamily={this.addFamily} removeFamily={this.removeFamily}
-                                           updateFamilyName={this.updateFamilyName} addMan={this.addManToFamily}
-                                           removeMan={this.removeManFromFamily}/>
+                                     removeMan={this.removeMan} focusOnNewItem={this.state.focusOnNewMan}
+                    />
+
+                    {!this.showSpendings() ? "" :
+                        <SpendingsComponent people={this.state.people} spendings={this.state.spendings}
+                                            updateSpendingName={this.updateSpendingName}
+                                            removeSpending={this.removeSpending} addSpending={this.addSpending}
+                                            updateSpendingPrice={this.updateSpendingPrice}
+                                            updatePayedBy={this.updatePayedBy} updateUsedBy={this.updateUsedBy}
+                                            focusOnNewItem={this.state.focusOnNewSpending}
+                        />
                     }
-                    <SpendingsComponent people={this.state.people} spendings={this.state.spendings}
-                                        updateSpendingName={this.updateSpendingName}
-                                        removeSpending={this.removeSpending} addSpending={this.addSpending}
-                                        updateSpendingPrice={this.updateSpendingPrice}
-                                        updatePayedBy={this.updatePayedBy} updateUsedBy={this.updateUsedBy}/>
 
-                    <SummaryComponent people={this.state.people} enableFamilies={this.state.enableFamilies}
-                                      families={this.state.families} summary={this.summary()}/>
+                    {!this.showFamilies() ? "" :
+                        <div>
+                            <div className="form-check">
+                                <input className="form-check-input" type="checkbox" id="enableFamilies"
+                                       checked={this.state.enableFamilies}
+                                       onChange={() => this.toggleEnableFamilies()}/>
+                                <label className="form-check-label" htmlFor="enableFamilies">
+                                    {t('families.enable')}
+                                </label>
+                            </div>
+                            {!this.state.enableFamilies ? "" :
+                                <FamiliesComponent people={this.state.people} signlePeople={peopleNotInFamilies}
+                                                   families={this.state.families}
+                                                   addFamily={this.addFamily} removeFamily={this.removeFamily}
+                                                   updateFamilyName={this.updateFamilyName} addMan={this.addManToFamily}
+                                                   removeMan={this.removeManFromFamily}
+                                                   focusOnNewItem={this.state.focusOnNewFamily}
+                                />
+                            }
+                        </div>
+                    }
 
-                    <TransactionsComponent transactions={this.optimizedTransactions(this.summary())}
-                                           enableFamilies={this.state.enableFamilies}/>
+                    {!this.showSummary() ? "" :
+                        <div>
+                            <SummaryComponent people={this.state.people} enableFamilies={this.state.enableFamilies}
+                                              families={this.state.families} summary={this.summary()}
+                            />
+
+                            <TransactionsComponent transactions={this.optimizedTransactions(this.summary())}
+                                                   enableFamilies={this.state.enableFamilies}
+                            />
+                        </div>
+                    }
                 </div>
             }</Translation>
         );
+    }
+
+    showSpendings = () => {
+        return this.state.people.length > 2 ||
+            (this.state.people.length === 2 && this.state.people.every(man => man.name.length > 0))
+    }
+
+    showFamilies = () => {
+        return this.state.spendings.length > 1 ||
+            (this.state.spendings.length === 1 && this.state.spendings[0].users.length > 0 &&
+                this.state.spendings[0].payedBy.length > 0 && this.state.spendings[0].spent > 0)
+    }
+
+    showSummary = () => {
+        return (!this.state.enableFamilies ||
+            this.state.families.filter(family => family.members.length > 0).every(family => family.name.length > 0)) &&
+            this.state.spendings.length > 0 && this.state.spendings.every(spending => {
+                return spending.spent > 0 && spending.payedBy.length > 0 && spending.users.length > 0
+            })
     }
 
     addMan = () => {
@@ -133,7 +177,12 @@ export class App extends React.Component<Props, State> {
         }
         let updatedPeople = [...this.state.people]
         updatedPeople.push(newMan)
-        this.setState({people: updatedPeople})
+        this.setState({
+            people: updatedPeople,
+            focusOnNewMan: true,
+            focusOnNewFamily: false,
+            focusOnNewSpending: false
+        })
     }
 
     updateManName = (id: string, newName: string) => {
@@ -208,7 +257,13 @@ export class App extends React.Component<Props, State> {
         }
         let updatedFamilies = [...this.state.families]
         updatedFamilies.push(newFamily)
-        this.setState({families: updatedFamilies})
+        this.setState({
+            families: updatedFamilies,
+            focusOnNewMan: false,
+            focusOnNewFamily: true,
+            focusOnNewSpending: false
+        })
+        return newFamily.id
     }
 
     updateFamilyName = (id: string, newName: string) => {
@@ -268,7 +323,12 @@ export class App extends React.Component<Props, State> {
             users: []
         }
         let updatedSpendings = [...this.state.spendings, newSpending]
-        this.setState({spendings: updatedSpendings})
+        this.setState({
+            spendings: updatedSpendings,
+            focusOnNewMan: false,
+            focusOnNewFamily: false,
+            focusOnNewSpending: true
+        })
     }
 
     removeSpending = (spending: Spending) => {
@@ -432,6 +492,9 @@ interface State {
     families: Family[];
     spendings: Spending[];
     enableFamilies: boolean;
+    focusOnNewMan: boolean;
+    focusOnNewFamily: boolean;
+    focusOnNewSpending: boolean;
 }
 
 export default withTranslation()(App)

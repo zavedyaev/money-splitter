@@ -12,7 +12,9 @@ export class TransactionsComponent extends React.Component<TransactionsComponent
                 {t =>
                     <div>
                         <h4>{t('transactions.header')}</h4>
-                        <p>{t('transactions.description')}</p>
+                        <div className="alert alert-primary" role="alert">
+                            {t('transactions.description')}
+                        </div>
                         <div className="table-responsive">
                             <table className="table table-hover table-sm">
                                 <thead>

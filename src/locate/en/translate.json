@@ -11,12 +11,14 @@
     },
     "people": {
       "header": "People",
+      "description": "At first add at least 2 people",
       "add": "Add a new one...",
       "namePlaceholder": "Name"
     },
     "families": {
       "enable": "Enable people grouping by families. We can reduce transactions count, in case only one man from a family will pay/receive money",
       "header": "Families",
+      "description": "Create families and group people by families. It is not necessary to create families for single people",
       "singlePeople": "Not grouped in a family",
       "members": "Members of selected family",
       "add": "Add a new family...",
@@ -24,6 +26,7 @@
     },
     "spendings": {
       "header": "Spendings",
+      "description": "Now add all spendings you want to split",
       "add": "Add a spending...",
       "namePlaceholder": "Spending",
       "price": "Price",
@@ -33,6 +36,7 @@
     },
     "summary": {
       "header": "Summary",
+      "description": "In the following table you can see summary of all spendings. Red rows are families/people who owe money. Green rows are families/people who paid for others.",
       "familyOrMan": "Family / Man",
       "man": "Man",
       "paid": "Paid",

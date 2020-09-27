@@ -26,6 +26,9 @@ export class FamiliesComponent extends React.Component<FamiliesComponentProps, F
                             <div className="card-body">
                                 <div>
                                     <h6>{t('families.header')}</h6>
+                                    <div className="alert alert-primary" role="alert">
+                                        {t('families.description')}
+                                    </div>
                                     <div className="form-row">
                                         {this.props.families.map((family, index) => (
                                             <div className="input-group col-sm-6 col-md-6 col-lg-4 col-xl-3"
@@ -39,6 +42,7 @@ export class FamiliesComponent extends React.Component<FamiliesComponentProps, F
                                                     </div>
                                                 </div>
                                                 <input type="text"
+                                                       autoFocus={this.props.focusOnNewItem}
                                                        className={family.name.length > 0 && family.members.length > 0 ? "form-control" : "form-control is-invalid"}
                                                        placeholder={t('families.namePlaceholder')}
                                                        aria-label={t('families.namePlaceholder')}
@@ -81,7 +85,7 @@ export class FamiliesComponent extends React.Component<FamiliesComponentProps, F
                                         ))}
                                     </div>
                                 </div>
-                                <div hidden={this.props.signlePeople.length === 0}>
+                                <div hidden={this.props.signlePeople.length === 0 || this.props.families.length === 0}>
                                     <h6>{t('families.singlePeople')}</h6>
                                     <div className="form-row">
                                         {this.props.signlePeople.map((man, index) => (
@@ -111,7 +115,7 @@ export class FamiliesComponent extends React.Component<FamiliesComponentProps, F
                             </div>
                             <div className="card-footer">
                                 <button type="button" className="btn btn-primary"
-                                        onClick={() => this.props.addFamily()}>
+                                        onClick={this.addFamily}>
                                     {t('families.add')}
                                 </button>
                             </div>
@@ -126,6 +130,11 @@ export class FamiliesComponent extends React.Component<FamiliesComponentProps, F
         this.setState({selectedFamilyId: family.id})
     }
 
+    addFamily = () => {
+        let id = this.props.addFamily()
+        this.setState({selectedFamilyId: id})
+    }
+
     removeFamily = (family: Family) => {
         if (this.state.selectedFamilyId === family.id) {
             this.setState({selectedFamilyId: undefined})
@@ -135,11 +144,12 @@ export class FamiliesComponent extends React.Component<FamiliesComponentProps, F
 }
 
 interface FamiliesComponentProps extends WithTranslation {
+    focusOnNewItem: boolean;
     people: Man[];
     signlePeople: Man[];
     families: Family[];
     updateFamilyName: (id: string, newName: string) => void;
-    addFamily: () => void;
+    addFamily: () => string;
     removeFamily: (family: Family) => void;
     addMan: (family: Family, man: Man) => void;
     removeMan: (family: Family, manId: string) => void;

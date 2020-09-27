@@ -19,6 +19,9 @@ export class SummaryComponent extends React.Component<SummaryComponentProps, Sum
                 {t =>
                     <div>
                         <h4>{t('summary.header')}</h4>
+                        <div className="alert alert-primary" role="alert">
+                            {t('summary.description')}
+                        </div>
                         <div className="table-responsive">
                             <table className="table table-hover table-sm">
                                 <thead>

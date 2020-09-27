@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ChangeEvent} from 'react';
 import {Translation, withTranslation, WithTranslation} from 'react-i18next';
 import {Man, Spending} from "./Models";
 import MultiSelect from "react-multi-select-component";
@@ -14,6 +14,9 @@ export class SpendingsComponent extends React.Component<SpendingsComponentProps>
                         <h5>
                             {t('spendings.header')}
                         </h5>
+                        <div className="alert alert-primary" role="alert">
+                            {t('spendings.description')}
+                        </div>
                         <div className="row row-cols-1 row-cols-md-2 row-cols-xl-3">
                             {this.props.spendings.map((spending, index) => (
                                 <div className="col mb-4" key={"spending-" + index}>
@@ -26,6 +29,7 @@ export class SpendingsComponent extends React.Component<SpendingsComponentProps>
                                                        aria-label={t('spendings.namePlaceholder')}
                                                        aria-describedby={"delete-spending-" + index + "-button"}
                                                        value={spending.name}
+                                                       autoFocus={this.props.focusOnNewItem}
                                                        onChange={event => this.props.updateSpendingName(spending, event.target.value)}
                                                 />
                                                 <div className="input-group-append">
@@ -38,7 +42,7 @@ export class SpendingsComponent extends React.Component<SpendingsComponentProps>
                                             </div>
                                         </div>
                                         <div className="card-body">
-                                            <form>
+                                            <form onSubmit={e => { e.preventDefault()}}>
                                                 <div className="form-group row">
                                                     <label htmlFor={"priceInput" + index}
                                                            className="col-sm-4 col-md-5 col-form-label">{t('spendings.price')}</label>
@@ -46,8 +50,9 @@ export class SpendingsComponent extends React.Component<SpendingsComponentProps>
                                                         <input type="number"
                                                                className={"form-control " + (spending.spent > 0 ? "" : "is-invalid")}
                                                                id={"priceInput" + index}
-                                                               min={0} step={0.01} value={spending.spent}
-                                                               onChange={e => this.props.updateSpendingPrice(spending, +e.target.value)}/>
+                                                               min={0} step={0.01}
+                                                               value={spending.spent === 0 ? "" : spending.spent}
+                                                               onChange={e => this.onPriceChange(spending, e)}/>
                                                         <div className="input-group-append">
                                                             <span className="input-group-text">
                                                                 {t('spendings.currency')}
@@ -110,6 +115,21 @@ export class SpendingsComponent extends React.Component<SpendingsComponentProps>
         );
     }
 
+    //fixme because of browser issue "01" and "1" values in input-number are the same, and event returns only number 1
+    //  it does not allows us to remove leading zeros
+    removeLeadingZeros = (input: string) => {
+        let withoutLeadingZeros = input.replace(/^0+/, '')
+        if (withoutLeadingZeros.length === 0) return "0"
+        if (/^[,.]/.test(withoutLeadingZeros)) return "0"+withoutLeadingZeros
+        return withoutLeadingZeros
+    }
+
+    onPriceChange = (spending: Spending, e: ChangeEvent<HTMLInputElement>) => {
+        let valid = (e.target.validity.valid) ? e.target.value : spending.spent;
+        let withoutLeadingZeros = this.removeLeadingZeros(valid.toString())
+        this.props.updateSpendingPrice(spending, +withoutLeadingZeros)
+    }
+
     parseSelectedPeople = (options: any[]): Man[] => {
         let selectedPeopleIds: string[] = []
         for (let i = 0; i < options.length; i++) {
@@ -120,6 +140,7 @@ export class SpendingsComponent extends React.Component<SpendingsComponentProps>
 }
 
 interface SpendingsComponentProps extends WithTranslation {
+    focusOnNewItem: boolean;
     people: Man[];
     spendings: Spending[];
 
