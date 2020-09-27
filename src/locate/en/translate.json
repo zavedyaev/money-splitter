@@ -48,7 +48,7 @@
     },
     "summary": {
       "header": "Summary",
-      "description": "In the following table you can see summary of all spendings. Red rows are families/people who owe money. Green rows are families/people who paid for others.",
+      "description": "In the following table, you can see a summary of all spendings. Red rows are families/people who owe money. Green rows are families/people who paid for others",
       "familyOrMan": "Family / Man",
       "man": "Man",
       "paid": "Paid",
