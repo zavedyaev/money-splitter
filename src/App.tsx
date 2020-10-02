@@ -167,9 +167,9 @@ export class App extends React.Component<Props, State> {
                                                     {t('calls.savedCalculationUrl')}
                                                 </label>
                                                 <input type="url" className="form-control" id="savedUrlInput"
-                                                       disabled={true}
                                                        hidden={!this.state.savedId}
                                                        value={this.getSavedUrl()}
+                                                       onFocus={event => event.target.select()}
                                                 />
                                             </div>
                                         </form>

@@ -6,7 +6,8 @@ export class ToastComponent extends React.Component<ToastComponentProps> {
         return (
             <Translation>
                 {t =>
-                    <div id="toasts" aria-live="polite" aria-atomic="true" style={{position: "relative", zIndex: 999}}>
+                    <div id="toasts" aria-live="polite" aria-atomic="true"
+                         style={{position: "fixed", top: 0, width: "100%", zIndex: 999}} >
                         <div className="mt-2 mr-2 ml-2" style={{position: "absolute", top: "0", right: "0"}}>
                             {this.props.errorMessages.map((errorMessage, index) => (
                                 <div key={"error-message-toast-"+index}
