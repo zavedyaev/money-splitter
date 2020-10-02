@@ -1,0 +1,14 @@
+{
+  "short_name": "Bill-Splitter",
+  "name": "Bill-Splitter - Zavedyaev",
+  "icons": [
+    {
+      "src": "manifest-favicon.png",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "http://zavedyaev.ru/bill-splitter/index.html",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
