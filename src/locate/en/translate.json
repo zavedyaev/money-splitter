@@ -14,7 +14,8 @@
       "reset": "Reset",
       "hideTips": "Hide tips",
       "showTips": "Show tips",
-      "showExample": "Show example"
+      "showExample": "Show example",
+      "loading": "Loading..."
     },
     "example": {
       "people": "[{\"id\": \"1\", \"name\": \"John\"}, {\"id\": \"2\", \"name\": \"Helen\"}, {\"id\": \"3\", \"name\": \"Bill\"}, {\"id\": \"4\", \"name\": \"Christopher\"}, {\"id\": \"5\", \"name\": \"Sarah\"}]",
@@ -63,6 +64,14 @@
       "creditorFamilyOrMan": "Creditor Family / Man",
       "creditorMan": "Creditor",
       "debt": "Debt"
+    },
+    "calls": {
+      "error": "Error",
+      "loadingError": "There was an error while data loading, please try again later",
+      "savingError": "There was an error while data saving, please try again later",
+      "save": "Save...",
+      "saving": "Saving",
+      "savedCalculationUrl": "Saved calculation URL"
     }
   }
 }

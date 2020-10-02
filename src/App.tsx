@@ -2,19 +2,29 @@ import React from 'react';
 import {Translation, withTranslation, WithTranslation} from 'react-i18next';
 import {Family, Man, OptimizedTransactions, Spending, Summary, SummaryRowFamily, SummaryRowMan} from "./Models";
 import PeopleComponent from "./PeopleComponent";
+import ToastComponent from "./ToastComponent";
 import {v4 as uuidv4} from 'uuid';
 import FamiliesComponent from "./FamiliesComponent";
 import SpendingsComponent from "./SpendingsComponent";
 import SummaryComponent from "./SummaryComponent";
 import {Helpers} from "./Helpers";
 import TransactionsComponent from "./TransactionsComponent";
+import $ from "jquery";
 
 export class App extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
+        let id = Helpers.getQueryVariable("id");
+
         document.title = this.props.t("description.title") + " - " + this.props.t("zavedyaev")
         this.state = {
+            id: (!id) ? undefined : id,
+            loading: !!id,
+            previousId: undefined,
+            saving: false,
+            savedId: undefined,
+            errorMessages: [],
             showTips: true,
             people: [],
             families: [],
@@ -31,6 +41,8 @@ export class App extends React.Component<Props, State> {
         return (
             <Translation>{t =>
                 <div>
+                    <ToastComponent errorMessages={this.state.errorMessages}/>
+
                     <nav className="navbar navbar-expand-lg navbar-light bg-light">
                         <div className="container">
                             <a className="navbar-brand" href="http://zavedyaev.ru">
@@ -70,57 +82,99 @@ export class App extends React.Component<Props, State> {
                     <div className="container">
                         <h1>{t('description.title')}</h1>
                         <p>{t('description.value')}</p>
-                        <PeopleComponent people={this.state.people} updateName={this.updateManName} addMan={this.addMan}
-                                         removeMan={this.removeMan} focusOnNewItem={this.state.focusOnNewMan}
-                                         showTips={this.state.showTips}
-                        />
 
-                        {!this.showSpendings() ? "" :
-                            <SpendingsComponent people={this.state.people} spendings={this.state.spendings}
-                                                updateSpendingName={this.updateSpendingName}
-                                                removeSpending={this.removeSpending} addSpending={this.addSpending}
-                                                updateSpendingPrice={this.updateSpendingPrice}
-                                                updatePayedBy={this.updatePayedBy} updateUsedBy={this.updateUsedBy}
-                                                focusOnNewItem={this.state.focusOnNewSpending}
-                                                showTips={this.state.showTips}
-                            />
-                        }
-
-                        {!this.showFamilies() ? "" :
-                            <div>
-                                <div className="form-check mt-2 mb-2">
-                                    <input className="form-check-input" type="checkbox" id="enableFamilies"
-                                           checked={this.state.enableFamilies}
-                                           onChange={() => this.toggleEnableFamilies()}/>
-                                    <label className="form-check-label" htmlFor="enableFamilies">
-                                        {t('families.enable')}
-                                    </label>
+                        {this.state.loading ?
+                            <div className="text-center">
+                                <div className="spinner-border text-primary" role="status">
+                                    <span className="sr-only">{t('nav.loading')}</span>
                                 </div>
-                                {!this.state.enableFamilies ? "" :
-                                    <FamiliesComponent people={this.state.people} signlePeople={peopleNotInFamilies}
-                                                       families={this.state.families}
-                                                       addFamily={this.addFamily} removeFamily={this.removeFamily}
-                                                       updateFamilyName={this.updateFamilyName}
-                                                       addMan={this.addManToFamily}
-                                                       removeMan={this.removeManFromFamily}
-                                                       focusOnNewItem={this.state.focusOnNewFamily}
-                                                       showTips={this.state.showTips}
+                            </div>
+                            :
+                            <div>
+                                <PeopleComponent people={this.state.people} updateName={this.updateManName}
+                                                 addMan={this.addMan}
+                                                 removeMan={this.removeMan} focusOnNewItem={this.state.focusOnNewMan}
+                                                 showTips={this.state.showTips}
+                                />
+
+                                {!this.showSpendings() ? "" :
+                                    <SpendingsComponent people={this.state.people} spendings={this.state.spendings}
+                                                        updateSpendingName={this.updateSpendingName}
+                                                        removeSpending={this.removeSpending}
+                                                        addSpending={this.addSpending}
+                                                        updateSpendingPrice={this.updateSpendingPrice}
+                                                        updatePayedBy={this.updatePayedBy}
+                                                        updateUsedBy={this.updateUsedBy}
+                                                        focusOnNewItem={this.state.focusOnNewSpending}
+                                                        showTips={this.state.showTips}
                                     />
                                 }
-                            </div>
-                        }
 
-                        {!this.showSummary() ? "" :
-                            <div>
-                                <SummaryComponent people={this.state.people} enableFamilies={this.state.enableFamilies}
-                                                  families={this.state.families} summary={this.summary()}
-                                                  showTips={this.state.showTips}
-                                />
+                                {!this.showFamilies() ? "" :
+                                    <div>
+                                        <div className="form-check mt-2 mb-2">
+                                            <input className="form-check-input" type="checkbox" id="enableFamilies"
+                                                   checked={this.state.enableFamilies}
+                                                   onChange={() => this.toggleEnableFamilies()}/>
+                                            <label className="form-check-label" htmlFor="enableFamilies">
+                                                {t('families.enable')}
+                                            </label>
+                                        </div>
+                                        {!this.state.enableFamilies ? "" :
+                                            <FamiliesComponent people={this.state.people}
+                                                               signlePeople={peopleNotInFamilies}
+                                                               families={this.state.families}
+                                                               addFamily={this.addFamily}
+                                                               removeFamily={this.removeFamily}
+                                                               updateFamilyName={this.updateFamilyName}
+                                                               addMan={this.addManToFamily}
+                                                               removeMan={this.removeManFromFamily}
+                                                               focusOnNewItem={this.state.focusOnNewFamily}
+                                                               showTips={this.state.showTips}
+                                            />
+                                        }
+                                    </div>
+                                }
 
-                                <TransactionsComponent transactions={this.optimizedTransactions(this.summary())}
-                                                       enableFamilies={this.state.enableFamilies}
-                                                       showTips={this.state.showTips}
-                                />
+                                {!this.showSummary() ? "" :
+                                    <div>
+                                        <SummaryComponent people={this.state.people}
+                                                          enableFamilies={this.state.enableFamilies}
+                                                          families={this.state.families} summary={this.summary()}
+                                                          showTips={this.state.showTips}
+                                        />
+
+                                        <TransactionsComponent transactions={this.optimizedTransactions(this.summary())}
+                                                               enableFamilies={this.state.enableFamilies}
+                                                               showTips={this.state.showTips}
+                                        />
+
+                                        <form onSubmit={e => {
+                                            e.preventDefault()
+                                        }}>
+                                            <button className="btn btn-primary" disabled={this.state.saving}
+                                                    onClick={() => this.save()}>
+                                                <span className="spinner-border spinner-border-sm mr-1" role="status"
+                                                      hidden={!this.state.saving}
+                                                      aria-hidden="true"/>
+                                                {this.state.saving ? t('calls.saving') : t('calls.save')}
+                                            </button>
+
+                                            <div className="form-group mt-2">
+                                                <label
+                                                    hidden={!this.state.savedId}
+                                                    htmlFor="savedUrlInput">
+                                                    {t('calls.savedCalculationUrl')}
+                                                </label>
+                                                <input type="url" className="form-control" id="savedUrlInput"
+                                                       disabled={true}
+                                                       hidden={!this.state.savedId}
+                                                       value={this.getSavedUrl()}
+                                                />
+                                            </div>
+                                        </form>
+                                    </div>
+                                }
                             </div>
                         }
                     </div>
@@ -129,12 +183,103 @@ export class App extends React.Component<Props, State> {
         );
     }
 
+    componentDidMount() {
+        if (this.state.loading) {
+            let serverUrl = this.getServerUrl()
+            fetch(serverUrl + "/" + this.state.id, {method: 'GET'}).then(response => {
+                if (!response.ok) {
+                    throw response
+                }
+                return response.json()
+            }).then(json => {
+                let people = json.people
+                let families = json.families
+                let spendings = json.spendings
+                let previousId = json.previousId
+
+                this.setState({
+                    loading: false,
+                    people: people ? people : [],
+                    families: families ? families : [],
+                    spendings: spendings ? spendings : [],
+                    previousId: previousId
+                })
+            }).catch(() => {
+                this.setState({loading: false})
+                this.reset()
+                this.showError(this.props.t('calls.loadingError'))
+            })
+        }
+    }
+
+    getServerUrl = () => {
+        return window.location.protocol + "//" + window.location.hostname + ":8081/calculation"
+    }
+
+    save = () => {
+        this.setState({saving: true}, () => {
+            let dataToSave = {
+                people: this.state.people,
+                families: this.state.families,
+                spendings: this.state.spendings,
+                previousId: this.state.id
+            }
+
+            let serverUrl = this.getServerUrl()
+            fetch(serverUrl, {
+                method: 'POST',
+                body: JSON.stringify(dataToSave),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (!response.ok) {
+                    throw response
+                }
+                return response.text()
+            }).then(id => {
+                this.setState({
+                    saving: false,
+                    savedId: id,
+                    previousId: this.state.id,
+                    id: id
+                })
+            }).catch(() => {
+                this.setState({saving: false})
+                this.showError(this.props.t('calls.savingError'))
+            })
+        })
+    }
+
+    getSavedUrl = () => {
+        if (this.state.savedId) {
+            return window.location.origin + window.location.pathname + "?id=" + this.state.savedId
+        } else {
+            return ""
+        }
+    }
+
+    showError = (errorMessage: string) => {
+        let newErrorMessages = [...this.state.errorMessages, errorMessage]
+        this.setState({errorMessages: newErrorMessages}, () => {
+            $(".toast").toast("show")
+        })
+        setTimeout(() => {
+            let withoutError = [...this.state.errorMessages].filter(it => it !== errorMessage)
+            this.setState({errorMessages: withoutError})
+        }, 10000);
+    }
+
     toggleShowTips = () => {
         this.setState({showTips: !this.state.showTips})
     }
 
     reset = () => {
         this.setState({
+            id: undefined,
+            previousId: undefined,
+            saving: false,
+            savedId: undefined,
             people: [],
             families: [],
             spendings: [],
@@ -490,6 +635,14 @@ interface Props extends WithTranslation {
 }
 
 interface State {
+    id?: string;
+    previousId?: string;
+    loading: boolean;
+
+    saving: boolean;
+    savedId?: string;
+    errorMessages: string[];
+
     showTips: boolean;
     people: Man[];
     families: Family[];
