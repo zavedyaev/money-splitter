@@ -201,6 +201,7 @@ export class App extends React.Component<Props, State> {
                     loading: false,
                     people: people ? people : [],
                     families: families ? families : [],
+                    enableFamilies: !!families,
                     spendings: spendings ? spendings : [],
                     previousId: previousId
                 })
@@ -220,7 +221,7 @@ export class App extends React.Component<Props, State> {
         this.setState({saving: true}, () => {
             let dataToSave = {
                 people: this.state.people,
-                families: this.state.families,
+                families: this.state.enableFamilies ? this.state.families : [],
                 spendings: this.state.spendings,
                 previousId: this.state.id
             }
