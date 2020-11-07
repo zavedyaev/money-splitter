@@ -288,14 +288,16 @@ export class App extends React.Component<Props, State> {
     }
 
     showExample = () => {
-        this.setState({
-            showTips: true,
-            people: JSON.parse(this.props.t('example.people')),
-            families: JSON.parse(this.props.t('example.families')),
-            spendings: JSON.parse(this.props.t('example.spendings')),
+        this.disableAutofocus(() =>
+            this.setState({
+                showTips: true,
+                people: JSON.parse(this.props.t('example.people')),
+                families: JSON.parse(this.props.t('example.families')),
+                spendings: JSON.parse(this.props.t('example.spendings')),
 
-            enableFamilies: true
-        })
+                enableFamilies: true
+            })
+        )
     }
 
     showSpendings = () => {
@@ -315,6 +317,14 @@ export class App extends React.Component<Props, State> {
             this.state.spendings.length > 0 && this.state.spendings.every(spending => {
                 return spending.spent > 0 && spending.payedBy.length > 0 && spending.users.length > 0
             })
+    }
+
+    disableAutofocus = (afterDisable: () => void) => {
+        this.setState({
+            focusOnNewMan: false,
+            focusOnNewFamily: false,
+            focusOnNewSpending: false
+        }, afterDisable)
     }
 
     addMan = () => {
@@ -342,7 +352,9 @@ export class App extends React.Component<Props, State> {
         let oldIndex = this.state.people.indexOf(oldMan)
         let updatedPeople = [...this.state.people]
         updatedPeople[oldIndex] = updatedMan
-        this.setState({people: updatedPeople})
+        this.disableAutofocus(() =>
+            this.setState({people: updatedPeople})
+        )
     }
 
     removeMan = (man: Man) => {
@@ -382,12 +394,15 @@ export class App extends React.Component<Props, State> {
 
             updatedSpendings[spendingIndex] = updatedSpending
         })
-
-        this.setState({people: updatedPeople, families: updatedFamilies, spendings: updatedSpendings})
+        this.disableAutofocus(() =>
+            this.setState({people: updatedPeople, families: updatedFamilies, spendings: updatedSpendings})
+        )
     }
 
     toggleEnableFamilies = () => {
-        this.setState({enableFamilies: !this.state.enableFamilies})
+        this.disableAutofocus(() =>
+            this.setState({enableFamilies: !this.state.enableFamilies})
+        )
     }
 
     peopleNotInFamilies = () => {
@@ -425,14 +440,18 @@ export class App extends React.Component<Props, State> {
         let oldIndex = this.state.families.indexOf(oldFamily)
         let updatedFamilies = [...this.state.families]
         updatedFamilies[oldIndex] = updatedFamily
-        this.setState({families: updatedFamilies})
+        this.disableAutofocus(() =>
+            this.setState({families: updatedFamilies})
+        )
     }
 
     removeFamily = (family: Family) => {
         let oldIndex = this.state.families.indexOf(family)
         let updatedFamilies = [...this.state.families]
         updatedFamilies.splice(oldIndex, 1)
-        this.setState({families: updatedFamilies})
+        this.disableAutofocus(() =>
+            this.setState({families: updatedFamilies})
+        )
     }
 
     addManToFamily = (family: Family, man: Man) => {
@@ -445,7 +464,9 @@ export class App extends React.Component<Props, State> {
 
         let updatedFamilies = [...this.state.families]
         updatedFamilies[index] = updatedFamily
-        this.setState({families: updatedFamilies})
+        this.disableAutofocus(() =>
+            this.setState({families: updatedFamilies})
+        )
     }
 
     removeManFromFamily = (family: Family, manId: string) => {
@@ -458,7 +479,9 @@ export class App extends React.Component<Props, State> {
         let index = this.state.families.indexOf(family);
         let updatedFamilies = [...this.state.families]
         updatedFamilies[index] = updatedFamily
-        this.setState({families: updatedFamilies})
+        this.disableAutofocus(() =>
+            this.setState({families: updatedFamilies})
+        )
     }
 
     addSpending = () => {
@@ -482,7 +505,9 @@ export class App extends React.Component<Props, State> {
         let oldIndex = this.state.spendings.indexOf(spending)
         let updatedSpendings = [...this.state.spendings]
         updatedSpendings.splice(oldIndex, 1)
-        this.setState({spendings: updatedSpendings})
+        this.disableAutofocus(() =>
+            this.setState({spendings: updatedSpendings})
+        )
     }
 
     updateSpendingName = (spending: Spending, newName: string) => {
@@ -491,7 +516,9 @@ export class App extends React.Component<Props, State> {
         let index = this.state.spendings.indexOf(spending);
         let updatedSpendings = [...this.state.spendings]
         updatedSpendings[index] = updatedSpending
-        this.setState({spendings: updatedSpendings})
+        this.disableAutofocus(() =>
+            this.setState({spendings: updatedSpendings})
+        )
     }
 
     updateSpendingPrice = (spending: Spending, newPrice: number) => {
@@ -500,7 +527,9 @@ export class App extends React.Component<Props, State> {
         let index = this.state.spendings.indexOf(spending);
         let updatedSpendings = [...this.state.spendings]
         updatedSpendings[index] = updatedSpending
-        this.setState({spendings: updatedSpendings})
+        this.disableAutofocus(() =>
+            this.setState({spendings: updatedSpendings})
+        )
     }
 
     updatePayedBy = (spending: Spending, payedBy: Man[]) => {
@@ -509,7 +538,9 @@ export class App extends React.Component<Props, State> {
         let index = this.state.spendings.indexOf(spending);
         let updatedSpendings = [...this.state.spendings]
         updatedSpendings[index] = updatedSpending
-        this.setState({spendings: updatedSpendings})
+        this.disableAutofocus(() =>
+            this.setState({spendings: updatedSpendings})
+        )
     }
 
     updateUsedBy = (spending: Spending, usedBy: Man[]) => {
@@ -518,7 +549,9 @@ export class App extends React.Component<Props, State> {
         let index = this.state.spendings.indexOf(spending);
         let updatedSpendings = [...this.state.spendings]
         updatedSpendings[index] = updatedSpending
-        this.setState({spendings: updatedSpendings})
+        this.disableAutofocus(() =>
+            this.setState({spendings: updatedSpendings})
+        )
     }
 
     summary = () => {
