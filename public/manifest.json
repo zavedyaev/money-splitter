@@ -7,7 +7,7 @@
       "type": "image/png"
     }
   ],
-  "start_url": "http://zavedyaev.ru/bill-splitter/index.html",
+  "start_url": "https://zavedyaev.ru/bill-splitter/index.html",
   "display": "standalone",
   "theme_color": "#000000",
   "background_color": "#ffffff"

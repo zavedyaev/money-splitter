@@ -45,7 +45,7 @@ export class App extends React.Component<Props, State> {
 
                     <nav className="navbar navbar-expand-lg navbar-light bg-light">
                         <div className="container">
-                            <a className="navbar-brand" href="http://zavedyaev.ru">
+                            <a className="navbar-brand" href="https://zavedyaev.ru">
                                 <img alt="icon" className="d-inline-block align-top" height="30" loading="lazy"
                                      src={process.env.PUBLIC_URL + '/favicon.png'}
                                      width="30"/>
@@ -214,7 +214,10 @@ export class App extends React.Component<Props, State> {
     }
 
     getServerUrl = () => {
-        return window.location.protocol + "//" + window.location.hostname + ":8081/calculation"
+        let protocol = "https:"
+        //for local run replace by
+        //let protocol = window.location.protocol
+        return protocol + "//" + window.location.hostname + ":8081/calculation"
     }
 
     save = () => {

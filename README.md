@@ -2,7 +2,7 @@
 ReactJS-based web-app for fast bill splitting between friends
 
 ## Demo-site
-http://zavedyaev.ru/bill-splitter
+https://zavedyaev.ru/bill-splitter
 
 ## License
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
