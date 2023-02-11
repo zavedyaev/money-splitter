@@ -15,7 +15,7 @@ export class App extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
-        let id = Helpers.getQueryVariable("id");
+        const id = Helpers.getQueryVariable("id");
 
         document.title = this.props.t("description.title") + " - " + this.props.t("zavedyaev")
         this.state = {
@@ -37,7 +37,7 @@ export class App extends React.Component<Props, State> {
     }
 
     render() {
-        let peopleNotInFamilies = this.peopleNotInFamilies()
+        const peopleNotInFamilies = this.peopleNotInFamilies()
         return (
             <Translation>{t =>
                 <div>
@@ -170,6 +170,7 @@ export class App extends React.Component<Props, State> {
                                                        hidden={!this.state.savedId}
                                                        value={this.getSavedUrl()}
                                                        onFocus={event => event.target.select()}
+                                                       readOnly={true}
                                                 />
                                             </div>
                                         </form>
@@ -185,17 +186,17 @@ export class App extends React.Component<Props, State> {
 
     componentDidMount() {
         if (this.state.loading) {
-            let serverUrl = this.getServerUrl()
+            const serverUrl = this.getServerUrl()
             fetch(serverUrl + "/" + this.state.id, {method: 'GET'}).then(response => {
                 if (!response.ok) {
                     throw response
                 }
                 return response.json()
             }).then(json => {
-                let people = json.people
-                let families = json.families
-                let spendings = json.spendings
-                let previousId = json.previousId
+                const people = json.people
+                const families = json.families
+                const spendings = json.spendings
+                const previousId = json.previousId
 
                 this.setState({
                     loading: false,
@@ -214,7 +215,7 @@ export class App extends React.Component<Props, State> {
     }
 
     getServerUrl = () => {
-        let protocol = "https:"
+        const protocol = "https:"
         //for local run replace by
         //let protocol = window.location.protocol
         return protocol + "//" + window.location.hostname + ":8081/calculation"
@@ -222,14 +223,14 @@ export class App extends React.Component<Props, State> {
 
     save = () => {
         this.setState({saving: true}, () => {
-            let dataToSave = {
+            const dataToSave = {
                 people: this.state.people,
                 families: this.state.enableFamilies ? this.state.families : [],
                 spendings: this.state.spendings,
                 previousId: this.state.id
             }
 
-            let serverUrl = this.getServerUrl()
+            const serverUrl = this.getServerUrl()
             fetch(serverUrl, {
                 method: 'POST',
                 body: JSON.stringify(dataToSave),
@@ -264,12 +265,12 @@ export class App extends React.Component<Props, State> {
     }
 
     showError = (errorMessage: string) => {
-        let newErrorMessages = [...this.state.errorMessages, errorMessage]
+        const newErrorMessages = [...this.state.errorMessages, errorMessage]
         this.setState({errorMessages: newErrorMessages}, () => {
             $(".toast").toast("show")
         })
         setTimeout(() => {
-            let withoutError = [...this.state.errorMessages].filter(it => it !== errorMessage)
+            const withoutError = [...this.state.errorMessages].filter(it => it !== errorMessage)
             this.setState({errorMessages: withoutError})
         }, 10000);
     }
@@ -332,11 +333,11 @@ export class App extends React.Component<Props, State> {
     }
 
     addMan = () => {
-        let newMan = {
+        const newMan = {
             id: uuidv4(),
             name: ""
         }
-        let updatedPeople = [...this.state.people]
+        const updatedPeople = [...this.state.people]
         updatedPeople.push(newMan)
         this.setState({
             people: updatedPeople,
@@ -347,14 +348,14 @@ export class App extends React.Component<Props, State> {
     }
 
     updateManName = (id: string, newName: string) => {
-        let updatedMan = {
+        const updatedMan = {
             id: id,
             name: newName
         } as Man
 
-        let oldMan = this.state.people.find(value => value.id === id)!!
-        let oldIndex = this.state.people.indexOf(oldMan)
-        let updatedPeople = [...this.state.people]
+        const oldMan = this.state.people.find(value => value.id === id)!!
+        const oldIndex = this.state.people.indexOf(oldMan)
+        const updatedPeople = [...this.state.people]
         updatedPeople[oldIndex] = updatedMan
         this.disableAutofocus(() =>
             this.setState({people: updatedPeople})
@@ -362,36 +363,36 @@ export class App extends React.Component<Props, State> {
     }
 
     removeMan = (man: Man) => {
-        let oldIndex = this.state.people.indexOf(man)
-        let updatedPeople = [...this.state.people]
+        const oldIndex = this.state.people.indexOf(man)
+        const updatedPeople = [...this.state.people]
         updatedPeople.splice(oldIndex, 1)
 
-        let updatedFamilies = [...this.state.families]
+        const updatedFamilies = [...this.state.families]
         this.state.families.forEach((family, familyIndex) => {
-            let manIndex = family.members.indexOf(man.id)
+            const manIndex = family.members.indexOf(man.id)
             if (manIndex >= 0) {
-                let updatedFamily = {...family};
-                let updatedMembers = [...updatedFamily.members]
+                const updatedFamily = {...family};
+                const updatedMembers = [...updatedFamily.members]
                 updatedMembers.splice(manIndex, 1)
                 updatedFamily.members = updatedMembers
                 updatedFamilies[familyIndex] = updatedFamily
             }
         })
 
-        let updatedSpendings = [...this.state.spendings]
+        const updatedSpendings = [...this.state.spendings]
         this.state.spendings.forEach((spending, spendingIndex) => {
-            let updatedSpending = {...spending};
+            const updatedSpending = {...spending};
 
-            let payedByIndex = spending.payedBy.indexOf(man.id)
+            const payedByIndex = spending.payedBy.indexOf(man.id)
             if (payedByIndex >= 0) {
-                let updatedMembers = [...updatedSpending.payedBy]
+                const updatedMembers = [...updatedSpending.payedBy]
                 updatedMembers.splice(payedByIndex, 1)
                 updatedSpending.payedBy = updatedMembers
             }
 
-            let userIndex = spending.users.indexOf(man.id)
+            const userIndex = spending.users.indexOf(man.id)
             if (userIndex >= 0) {
-                let updatedMembers = [...updatedSpending.users]
+                const updatedMembers = [...updatedSpending.users]
                 updatedMembers.splice(userIndex, 1)
                 updatedSpending.users = updatedMembers
             }
@@ -410,18 +411,18 @@ export class App extends React.Component<Props, State> {
     }
 
     peopleNotInFamilies = () => {
-        let allPeople = this.state.people
-        let peopleInFamilyIds = this.state.families.flatMap(value => value.members)
+        const allPeople = this.state.people
+        const peopleInFamilyIds = this.state.families.flatMap(value => value.members)
         return allPeople.filter(value => !peopleInFamilyIds.includes(value.id))
     }
 
     addFamily = () => {
-        let newFamily = {
+        const newFamily = {
             id: uuidv4(),
             name: "",
             members: []
         }
-        let updatedFamilies = [...this.state.families]
+        const updatedFamilies = [...this.state.families]
         updatedFamilies.push(newFamily)
         this.setState({
             families: updatedFamilies,
@@ -433,16 +434,16 @@ export class App extends React.Component<Props, State> {
     }
 
     updateFamilyName = (id: string, newName: string) => {
-        let oldFamily = this.state.families.find(value => value.id === id)!!
-        let updatedFamily = {
+        const oldFamily = this.state.families.find(value => value.id === id)!!
+        const updatedFamily = {
             id: id,
             name: newName,
             members: oldFamily.members
         } as Family
 
 
-        let oldIndex = this.state.families.indexOf(oldFamily)
-        let updatedFamilies = [...this.state.families]
+        const oldIndex = this.state.families.indexOf(oldFamily)
+        const updatedFamilies = [...this.state.families]
         updatedFamilies[oldIndex] = updatedFamily
         this.disableAutofocus(() =>
             this.setState({families: updatedFamilies})
@@ -450,8 +451,8 @@ export class App extends React.Component<Props, State> {
     }
 
     removeFamily = (family: Family) => {
-        let oldIndex = this.state.families.indexOf(family)
-        let updatedFamilies = [...this.state.families]
+        const oldIndex = this.state.families.indexOf(family)
+        const updatedFamilies = [...this.state.families]
         updatedFamilies.splice(oldIndex, 1)
         this.disableAutofocus(() =>
             this.setState({families: updatedFamilies})
@@ -459,14 +460,14 @@ export class App extends React.Component<Props, State> {
     }
 
     addManToFamily = (family: Family, man: Man) => {
-        let updatedFamily = {
+        const updatedFamily = {
             id: family.id,
             name: family.name,
             members: [...family.members, man.id]
         }
-        let index = this.state.families.indexOf(family);
+        const index = this.state.families.indexOf(family);
 
-        let updatedFamilies = [...this.state.families]
+        const updatedFamilies = [...this.state.families]
         updatedFamilies[index] = updatedFamily
         this.disableAutofocus(() =>
             this.setState({families: updatedFamilies})
@@ -474,14 +475,14 @@ export class App extends React.Component<Props, State> {
     }
 
     removeManFromFamily = (family: Family, manId: string) => {
-        let updatedMembers = family.members.filter(value => value !== manId)
-        let updatedFamily = {
+        const updatedMembers = family.members.filter(value => value !== manId)
+        const updatedFamily = {
             id: family.id,
             name: family.name,
             members: updatedMembers
         }
-        let index = this.state.families.indexOf(family);
-        let updatedFamilies = [...this.state.families]
+        const index = this.state.families.indexOf(family);
+        const updatedFamilies = [...this.state.families]
         updatedFamilies[index] = updatedFamily
         this.disableAutofocus(() =>
             this.setState({families: updatedFamilies})
@@ -489,14 +490,14 @@ export class App extends React.Component<Props, State> {
     }
 
     addSpending = () => {
-        let newSpending = {
+        const newSpending = {
             id: uuidv4(),
             name: "",
             spent: 0,
             payedBy: [],
             users: []
         }
-        let updatedSpendings = [...this.state.spendings, newSpending]
+        const updatedSpendings = [...this.state.spendings, newSpending]
         this.setState({
             spendings: updatedSpendings,
             focusOnNewMan: false,
@@ -506,8 +507,8 @@ export class App extends React.Component<Props, State> {
     }
 
     removeSpending = (spending: Spending) => {
-        let oldIndex = this.state.spendings.indexOf(spending)
-        let updatedSpendings = [...this.state.spendings]
+        const oldIndex = this.state.spendings.indexOf(spending)
+        const updatedSpendings = [...this.state.spendings]
         updatedSpendings.splice(oldIndex, 1)
         this.disableAutofocus(() =>
             this.setState({spendings: updatedSpendings})
@@ -515,10 +516,10 @@ export class App extends React.Component<Props, State> {
     }
 
     updateSpendingName = (spending: Spending, newName: string) => {
-        let updatedSpending = {...spending, name: newName}
+        const updatedSpending = {...spending, name: newName}
 
-        let index = this.state.spendings.indexOf(spending);
-        let updatedSpendings = [...this.state.spendings]
+        const index = this.state.spendings.indexOf(spending);
+        const updatedSpendings = [...this.state.spendings]
         updatedSpendings[index] = updatedSpending
         this.disableAutofocus(() =>
             this.setState({spendings: updatedSpendings})
@@ -526,10 +527,10 @@ export class App extends React.Component<Props, State> {
     }
 
     updateSpendingPrice = (spending: Spending, newPrice: number) => {
-        let updatedSpending = {...spending, spent: newPrice}
+        const updatedSpending = {...spending, spent: newPrice}
 
-        let index = this.state.spendings.indexOf(spending);
-        let updatedSpendings = [...this.state.spendings]
+        const index = this.state.spendings.indexOf(spending);
+        const updatedSpendings = [...this.state.spendings]
         updatedSpendings[index] = updatedSpending
         this.disableAutofocus(() =>
             this.setState({spendings: updatedSpendings})
@@ -537,10 +538,10 @@ export class App extends React.Component<Props, State> {
     }
 
     updatePayedBy = (spending: Spending, payedBy: Man[]) => {
-        let updatedSpending = {...spending, payedBy: payedBy.map(value => value.id)}
+        const updatedSpending = {...spending, payedBy: payedBy.map(value => value.id)}
 
-        let index = this.state.spendings.indexOf(spending);
-        let updatedSpendings = [...this.state.spendings]
+        const index = this.state.spendings.indexOf(spending);
+        const updatedSpendings = [...this.state.spendings]
         updatedSpendings[index] = updatedSpending
         this.disableAutofocus(() =>
             this.setState({spendings: updatedSpendings})
@@ -548,10 +549,10 @@ export class App extends React.Component<Props, State> {
     }
 
     updateUsedBy = (spending: Spending, usedBy: Man[]) => {
-        let updatedSpending = {...spending, users: usedBy.map(value => value.id)}
+        const updatedSpending = {...spending, users: usedBy.map(value => value.id)}
 
-        let index = this.state.spendings.indexOf(spending);
-        let updatedSpendings = [...this.state.spendings]
+        const index = this.state.spendings.indexOf(spending);
+        const updatedSpendings = [...this.state.spendings]
         updatedSpendings[index] = updatedSpending
         this.disableAutofocus(() =>
             this.setState({spendings: updatedSpendings})
@@ -559,41 +560,40 @@ export class App extends React.Component<Props, State> {
     }
 
     summary = () => {
-        let summaryRowsForPeople: SummaryRowMan[] = this.state.people.map(man => ({
+        const summaryRowsForPeople: SummaryRowMan[] = this.state.people.map(man => ({
             manId: man.id,
             paid: 0,
             used: 0,
             difference: 0
-
         }));
         this.state.spendings.forEach(spending => {
-            let payedByMan = spending.spent / spending.payedBy.length
-            let spentByMan = spending.spent / spending.users.length
+            const payedByMan = spending.spent / spending.payedBy.length
+            const spentByMan = spending.spent / spending.users.length
 
             spending.payedBy.forEach(manId => {
-                let payedMan = summaryRowsForPeople.find(it => it.manId === manId)
+                const payedMan = summaryRowsForPeople.find(it => it.manId === manId)
                 payedMan!!.paid += payedByMan
                 payedMan!!.difference += payedByMan
             })
 
             spending.users.forEach(manId => {
-                let user = summaryRowsForPeople.find(it => it.manId === manId)
+                const user = summaryRowsForPeople.find(it => it.manId === manId)
                 user!!.used += spentByMan
                 user!!.difference -= spentByMan
             })
         })
 
-        let rows: (SummaryRowMan | SummaryRowFamily)[] = [];
+        const rows: (SummaryRowMan | SummaryRowFamily)[] = [];
 
         if (this.state.enableFamilies) {
-            let validFamilies = this.state.families.filter(family => family.members.length > 0)
+            const validFamilies = this.state.families.filter(family => family.members.length > 0)
 
-            let summaryRowsForFamilies: SummaryRowFamily[] = validFamilies.map(family => {
+            const summaryRowsForFamilies: SummaryRowFamily[] = validFamilies.map(family => {
                 let paid = 0
                 let used = 0
-                let summaryForMembers: SummaryRowMan[] = []
+                const summaryForMembers: SummaryRowMan[] = []
                 family.members.forEach(manId => {
-                    let summary = summaryRowsForPeople.find(summaryForMan => summaryForMan.manId === manId)!!
+                    const summary = summaryRowsForPeople.find(summaryForMan => summaryForMan.manId === manId)!!
                     paid += summary.paid
                     used += summary.used
                     summaryForMembers.push(summary)
@@ -618,20 +618,20 @@ export class App extends React.Component<Props, State> {
 
     optimizedTransactions = (summary: Summary) => {
         let rowsWithDebts: (SummaryRowMan | SummaryRowFamily)[] = summary.rows.filter(row => !Helpers.zero(row.difference)).map(row => ({...row}))
-        let result = [] as OptimizedTransactions[];
+        const result = [] as OptimizedTransactions[];
         while (rowsWithDebts.length > 0) {
             rowsWithDebts.sort((a, b) => {
                 return b.difference - a.difference
             })
-            let maxCreditor = rowsWithDebts[0];
-            let maxDebtor = rowsWithDebts[rowsWithDebts.length - 1];
+            const maxCreditor = rowsWithDebts[0];
+            const maxDebtor = rowsWithDebts[rowsWithDebts.length - 1];
 
             let sum;
             if (maxCreditor.difference > -(maxDebtor.difference)) {
                 sum = -(maxDebtor.difference);
                 rowsWithDebts.splice(rowsWithDebts.length - 1, 1);
 
-                let newDifference = maxCreditor.difference - sum;
+                const newDifference = maxCreditor.difference - sum;
                 if (Helpers.zero(newDifference)) {
                     rowsWithDebts.splice(0, 1);
                 } else {
@@ -640,7 +640,7 @@ export class App extends React.Component<Props, State> {
             } else {
                 sum = maxCreditor.difference;
                 rowsWithDebts.splice(0, 1);
-                let newDifference = maxDebtor.difference + sum;
+                const newDifference = maxDebtor.difference + sum;
                 if (Helpers.zero(Math.abs(newDifference))) {
                     rowsWithDebts.splice(rowsWithDebts.length - 1, 1);
                 } else {

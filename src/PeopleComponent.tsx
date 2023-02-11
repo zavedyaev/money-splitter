@@ -6,7 +6,7 @@ export class PeopleComponent extends React.Component<PeopleComponentProps> {
     render() {
         return (
             <Translation>
-                {t =>
+                {(t: (name :string) => string) =>
                     <div className="card">
                         <h5 className="card-header" id="peopleHeading">
                             <a data-toggle="collapse" data-target="#peopleCollapse" aria-expanded="true"

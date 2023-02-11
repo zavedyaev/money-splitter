@@ -11,10 +11,10 @@ export class FamiliesComponent extends React.Component<FamiliesComponentProps, F
     }
 
     render() {
-        let selectedFamily = this.props.families.find(value => value.id === this.state.selectedFamilyId)
+        const selectedFamily = this.props.families.find(value => value.id === this.state.selectedFamilyId)
         return (
             <Translation>
-                {t =>
+                {(t: (name :string) => string) =>
                     <div className="card">
                         <h5 className="card-header" id="familiesHeading">
                             <a data-toggle="collapse" data-target="#familiesCollapse" aria-expanded="true"
@@ -134,15 +134,8 @@ export class FamiliesComponent extends React.Component<FamiliesComponentProps, F
     }
 
     addFamily = () => {
-        let id = this.props.addFamily()
+        const id = this.props.addFamily()
         this.setState({selectedFamilyId: id})
-    }
-
-    removeFamily = (family: Family) => {
-        if (this.state.selectedFamilyId === family.id) {
-            this.setState({selectedFamilyId: undefined})
-        }
-        this.props.removeFamily(family)
     }
 }
 

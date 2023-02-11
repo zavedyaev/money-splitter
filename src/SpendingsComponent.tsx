@@ -1,15 +1,15 @@
 import React, {ChangeEvent} from 'react';
 import {Translation, withTranslation, WithTranslation} from 'react-i18next';
 import {Man, Spending} from "./Models";
-import MultiSelect from "react-multi-select-component";
+import { MultiSelect } from "react-multi-select-component";
 
 export class SpendingsComponent extends React.Component<SpendingsComponentProps> {
     render() {
-        let peopleOptions = this.props.people.map(man => ({label: man.name, value: man.id}));
+        const peopleOptions = this.props.people.map(man => ({label: man.name, value: man.id}));
 
         return (
             <Translation>
-                {t =>
+                {(t: (name :string) => string) =>
                     <div>
                         <h5 className="mt-2">
                             {t('spendings.header')}
@@ -117,20 +117,20 @@ export class SpendingsComponent extends React.Component<SpendingsComponentProps>
     //fixme because of browser issue "01" and "1" values in input-number are the same, and event returns only number 1
     //  it does not allows us to remove leading zeros
     removeLeadingZeros = (input: string) => {
-        let withoutLeadingZeros = input.replace(/^0+/, '')
+        const withoutLeadingZeros = input.replace(/^0+/, '')
         if (withoutLeadingZeros.length === 0) return "0"
         if (/^[,.]/.test(withoutLeadingZeros)) return "0"+withoutLeadingZeros
         return withoutLeadingZeros
     }
 
     onPriceChange = (spending: Spending, e: ChangeEvent<HTMLInputElement>) => {
-        let valid = (e.target.validity.valid) ? e.target.value : spending.spent;
-        let withoutLeadingZeros = this.removeLeadingZeros(valid.toString())
+        const valid = (e.target.validity.valid) ? e.target.value : spending.spent
+        const withoutLeadingZeros = this.removeLeadingZeros(valid.toString())
         this.props.updateSpendingPrice(spending, +withoutLeadingZeros)
     }
 
     parseSelectedPeople = (options: any[]): Man[] => {
-        let selectedPeopleIds: string[] = []
+        const selectedPeopleIds: string[] = []
         for (let i = 0; i < options.length; i++) {
             selectedPeopleIds.push(options[i].value);
         }
